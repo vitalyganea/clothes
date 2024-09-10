@@ -14,8 +14,7 @@ class ProductController extends Controller
     public function index()
     {
         // Fetch paginated products
-        $products = Product::paginate(12); // 12 products per page
-
+        $products = Product::with('images')->paginate(12); // 12 products per page
         return view('products.index', compact('products'));
     }
 
@@ -45,12 +44,15 @@ class ProductController extends Controller
         $product->shop_id = $shopId;
         $product->save();
 
+
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('public/product_images');
+                $url = Storage::url($path); // Generate the URL for the stored image
+
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'path' => $path
+                    'path' => $url // Save the URL instead of the path
                 ]);
             }
         }

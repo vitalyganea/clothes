@@ -25,8 +25,7 @@ class HomeController extends Controller
     public function index()
     {
         // Fetch paginated products
-        $products = Product::paginate(12); // 12 products per page
-
+        $products = Product::with('images')->paginate(12); // 12 products per page
         return view('products.index', compact('products'));
     }
 }

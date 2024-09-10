@@ -9,11 +9,11 @@
                 <div class="col-md-4">
                     <div class="card mb-4">
                         <!-- If the product has an image -->
-{{--                        @if ($product->images->count() > 0)--}}
-{{--                            <img src="{{ asset('storage/' . $product->images->first()->path) }}" class="card-img-top" alt="{{ $product->name }}">--}}
-{{--                        @else--}}
+                        @if ($product->images->count() > 0)
+                            <img src="{{ asset($product->images->first()->path) }}" class="card-img-top" alt="{{ $product->name }}">
+                        @else
                             <img src="https://via.placeholder.com/150" class="card-img-top" alt="No image available">
-{{--                        @endif--}}
+                        @endif
                         <div class="card-body">
                             <h5 class="card-title">{{ $product->name }}</h5>
                             <p class="card-text">{{ $product->description }}</p>
