@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ShopController;
+use App\Http\Controllers\ProductImageController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\ProductController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,21 +15,41 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [ProductController::class, 'index'])->name('home');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::resource('shops', ShopController::class);
+Route::get('shops/{shop}/products/create', [ProductController::class, 'create'])->name('products.create');
+Route::post('shops/{shop}/products', [ProductController::class, 'store'])->name('products.store');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/my-shops', [ShopController::class, 'index'])->name('shops.index');
+Route::get('/shops/{id}/edit', [ShopController::class, 'edit'])->name('shops.edit');
+Route::put('/shops/{id}', [ShopController::class, 'update'])->name('shops.update');
+Route::delete('/shops/{id}', [ShopController::class, 'destroy'])->name('shops.destroy');
 
-});
+// Product routes
+Route::get('products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
+Route::put('products/{id}', [ProductController::class, 'update'])->name('products.update');
+Route::delete('products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+Route::get('/shops/{id}/products', [ProductController::class, 'shopProducts'])->name('shops.products');
 
-require __DIR__.'/auth.php';
+Route::delete('/product-image/{id}', [ProductImageController::class, 'deleteImage'])->name('product-image.delete');
+
+
+Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+
+
+// Route to display all shops
+Route::get('/shops', [ShopController::class, 'index'])->name('shops.index');
+
+// Route to show the form for creating a new shop
+Route::get('/shops/create', [ShopController::class, 'create'])->name('shops.create');
+
+// Route to store a newly created shop
+Route::post('/shops', [ShopController::class, 'store'])->name('shops.store');
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
