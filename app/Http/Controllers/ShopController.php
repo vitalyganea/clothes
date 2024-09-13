@@ -44,9 +44,15 @@ class ShopController extends Controller
     }
 
     // Display a listing of the shops
-    public function index()
+    public function myShops()
     {
         $shops = Shop::with('products')->where('user_id', auth()->id())->get();
+        return view('shops.index', compact('shops'));
+    }
+
+    public function index()
+    {
+        $shops = Shop::all();
         return view('shops.index', compact('shops'));
     }
 

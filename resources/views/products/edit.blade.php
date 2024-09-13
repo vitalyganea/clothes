@@ -107,7 +107,6 @@
 
 </style>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox-plus-jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -167,7 +166,7 @@
             title: 'Success!',
             text: "{{ session('success') }}",
             icon: 'success',
-            timer: 3000,
+            timer: 1300,
             showConfirmButton: false
         });
         @endif

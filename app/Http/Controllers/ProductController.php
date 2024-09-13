@@ -3,18 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\ProductImage;
 use App\Models\Shop;
+use App\Models\Size;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
 
-    public function index()
+    public function index(Request $request, $categoryId = null)
     {
+        // Start query with eager loading
+        $query = Product::with('images');
+
+        // Conditionally add where clause if categoryId is set
+        if (!is_null($categoryId)) {
+            $query->where('category_id', $categoryId);
+        }
+
         // Fetch paginated products
-        $products = Product::with('images')->paginate(12); // 12 products per page
+        $products = $query->paginate(12); // 12 products per page
+
         return view('products.index', compact('products'));
     }
 
@@ -27,7 +39,9 @@ class ProductController extends Controller
     public function create($shopId)
     {
         $shop = Shop::find($shopId);
-        return view('products.create', compact('shop'));
+        $productSizes = Size::all();
+        $productCategories = ProductCategory::all();
+        return view('products.create', compact(['shop', 'productCategories', 'productSizes']));
     }
 
     public function store(Request $request, $shopId)
@@ -35,6 +49,9 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
+            'price' => 'required',
+            'category_id' => 'required',
+            'size_id' => 'required',
             'images.*' => 'image|nullable|max:1999'
         ]);
 
@@ -42,7 +59,12 @@ class ProductController extends Controller
         $product->name = $request->name;
         $product->description = $request->description;
         $product->shop_id = $shopId;
+        $product->user_id = Auth::user()->id;
+        $product->price = $request->price;
+        $product->category_id = $request->category_id;
+        $product->size_id = $request->size_id;
         $product->save();
+
 
 
         if ($request->hasFile('images')) {
@@ -123,7 +145,7 @@ class ProductController extends Controller
 
     public function show($productId)
     {
-        $product = Product::with('images')->findOrFail($productId);
+        $product = Product::with(['images','shop', 'productCategory', 'productSize'])->findOrFail($productId);
 
         return view('products.show', compact('product'));
     }

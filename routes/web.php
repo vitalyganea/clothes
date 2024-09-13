@@ -16,8 +16,9 @@ use App\Http\Controllers\ProductController;
 */
 
 Route::get('/', [ProductController::class, 'index'])->name('home');
-
+Route::get('/category/{category}', [ProductController::class, 'index'])->name('category.index');
 Route::resource('shops', ShopController::class);
+Route::get('my-shops', [ShopController::class,'myShops'])->name('shop.my-shops')->middleware('auth');
 Route::get('shops/{shop}/products/create', [ProductController::class, 'create'])->name('products.create');
 Route::post('shops/{shop}/products', [ProductController::class, 'store'])->name('products.store');
 
