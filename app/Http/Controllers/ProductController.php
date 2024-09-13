@@ -27,6 +27,10 @@ class ProductController extends Controller
         // Fetch paginated products
         $products = $query->paginate(12); // 12 products per page
 
+        if ($request->ajax()) {
+            return response()->view('products.partials.product-list', compact('products'));
+        }
+
         return view('products.index', compact('products'));
     }
 

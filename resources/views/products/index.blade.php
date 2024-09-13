@@ -4,25 +4,25 @@
     <div class="container">
         <h1>All Products</h1>
 
-        <div class="row">
+        <div class="row" id="product-list">
             @forelse ($products as $product)
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-3 col-sm-6 product-item">
                     <a href="{{ route('products.show', $product->id) }}">
-                    <div class="card mb-4 product-card">
-                        <!-- If the product has an image -->
-                        @if ($product->images->count() > 0)
-                            <div class="image-container">
-                                <img src="{{ asset($product->images->first()->path) }}" class="card-img" alt="{{ $product->name }}">
+                        <div class="card mb-4 product-card">
+                            <!-- If the product has an image -->
+                            @if ($product->images->count() > 0)
+                                <div class="image-container">
+                                    <img src="{{ asset($product->images->first()->path) }}" class="card-img" alt="{{ $product->name }}">
+                                </div>
+                            @else
+                                <div class="image-container">
+{{--                                    <img src="https://via.placeholder.com/150" class="card-img" alt="No image available">--}}
+                                </div>
+                            @endif
+                            <div class="card-body title-container">
+                                <h5 class="card-title">{{ $product->name }}</h5>
                             </div>
-                        @else
-                            <div class="image-container">
-                                <img src="https://via.placeholder.com/150" class="card-img" alt="No image available">
-                            </div>
-                        @endif
-                        <div class="card-body title-container">
-                            <h5 class="card-title">{{ $product->name }}</h5>
                         </div>
-                    </div>
                     </a>
                 </div>
             @empty
@@ -30,12 +30,69 @@
             @endforelse
         </div>
 
-        <!-- Pagination Links -->
-        <div class="d-flex justify-content-center">
-            {{ $products->links() }}
+        <!-- Invisible div for pagination -->
+        <div id="pagination" style="display: none;">
+            {{ $products->links('pagination::bootstrap-4') }}
         </div>
     </div>
 @endsection
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let loading = false;
+        let page = 1;
+        let hasMoreProducts = true; // Flag to check if there are more products to load
+
+        const loadMoreProducts = () => {
+            if (loading || !hasMoreProducts) return;
+
+            loading = true;
+            page++;
+
+            fetch(`/?page=${page}`)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newProducts = doc.querySelector('#product-list');
+                    const newPagination = doc.querySelector('#pagination'); // The invisible div for pagination
+
+                    // Check if newProducts is empty or if pagination links are not present
+                    if (!newProducts || !newProducts.innerHTML.trim()) {
+                        hasMoreProducts = false; // No more products to load
+                        window.removeEventListener('scroll', onScroll);
+                        return;
+                    }
+
+                    document.querySelector('#product-list').insertAdjacentHTML('beforeend', newProducts.innerHTML);
+
+                    // Update pagination content
+                    if (newPagination && newPagination.innerHTML.trim()) {
+                        document.querySelector('#pagination').innerHTML = newPagination.innerHTML;
+                    } else {
+                        hasMoreProducts = false; // No more pagination links, stop loading
+                        window.removeEventListener('scroll', onScroll);
+                    }
+
+                    loading = false;
+                })
+                .catch(error => {
+                    console.error('Error loading more products:', error);
+                    loading = false;
+                });
+        };
+
+        const onScroll = () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+                loadMoreProducts();
+            }
+        };
+
+        window.addEventListener('scroll', onScroll);
+    });
+
+</script>
+
 
 <style>
     .product-card {
