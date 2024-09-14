@@ -43,11 +43,20 @@
                     <p class="text-lg"><b>Price:</b> {{$product->price }} mdl</p>
                 </div>
                 <div class="mb-4">
-                    <p class="text-lg"><b>Category:</b> {{$product->productCategory->name }}</p>
+                    <p class="text-lg"><b>Category:</b>
+                        <a href="{{ route('category.index', $product->productCategory->id)}}">
+                            {{$product->productCategory->name }}
+                        </a>
+                    </p>
                 </div>
 
                 <div class="mb-4">
-                    <p class="text-lg"><b>Shop:</b> {{$product->shop->name }}</p>
+                    <p class="text-lg">
+                        <b>Shop:</b>
+                        <a href="{{ route('shop.show', $product->shop_id)}}">
+                        {{$product->shop->name }}
+                        </a>
+                    </p>
                 </div>
 
             </div>

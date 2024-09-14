@@ -37,7 +37,7 @@ class ProductController extends Controller
     public function shopProducts($shopId)
     {
         $shop = Shop::with('products')->findOrFail($shopId);
-        return view('products.shopProducts', compact('shop'));
+        return view('products.myShopProducts', compact('shop'));
     }
 
     public function create($shopId)

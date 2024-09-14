@@ -67,6 +67,18 @@
                             <a class="dropdown-item" href="{{ route('shop.my-shops') }}">
                                 My Shops
                             </a>
+                            <div class="dropdown-item">
+                                <!-- Links for each flag -->
+                                <a href="{{ route('language.switch', ['lang' => 'ro']) }}">
+                                    <img class="lang-flag" src="{{ asset('assets/flags/ro.svg') }}" alt="Romanian">
+                                </a>
+                                <a href="{{ route('language.switch', ['lang' => 'ru']) }}">
+                                    <img class="lang-flag" src="{{ asset('assets/flags/ru.svg') }}" alt="Russian">
+                                </a>
+                                <a href="{{ route('language.switch', ['lang' => 'en']) }}">
+                                    <img class="lang-flag" src="{{ asset('assets/flags/en.svg') }}" alt="English">
+                                </a>
+                            </div>
                         </div>
                     </li>
                 @endguest
@@ -74,3 +86,16 @@
         </div>
     </div>
 </nav>
+<style>
+    .lang-flag {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        margin-right: 10px; /* Space between flags */
+    }
+
+    .dropdown-item a {
+        display: inline-block; /* Ensure links are inline */
+        margin-right: 3px; /* Space between flags */
+    }
+</style>

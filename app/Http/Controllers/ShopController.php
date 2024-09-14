@@ -47,13 +47,20 @@ class ShopController extends Controller
     public function myShops()
     {
         $shops = Shop::with('products')->where('user_id', auth()->id())->get();
-        return view('shops.index', compact('shops'));
+        return view('shops.myShops', compact('shops'));
     }
 
     public function index()
     {
-        $shops = Shop::all();
+        $shops = Shop::with('products')->get();
         return view('shops.index', compact('shops'));
+    }
+
+
+    public function show($id)
+    {
+        $shop = Shop::with('products')->findOrFail($id);
+        return view('shops.show', compact('shop'));
     }
 
     public function edit($id)
