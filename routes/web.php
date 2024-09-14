@@ -1,9 +1,11 @@
 <?php
 
-use App\Http\Controllers\ProductImageController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ShopController;
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductImageController;
+use App\Http\Controllers\ShopController;
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,6 +34,10 @@ Route::get('products/{id}/edit', [ProductController::class, 'edit'])->name('prod
 Route::put('products/{id}', [ProductController::class, 'update'])->name('products.update');
 Route::delete('products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 Route::get('/shops/{id}/products', [ProductController::class, 'shopProducts'])->name('shops.products');
+
+Route::get('/shops/{shop}', [ShopController::class, 'show'])->name('shop.show');
+Route::get('/language/{lang}', [LanguageController::class, 'switchLanguage'])->name('language.switch');
+
 
 Route::delete('/product-image/{id}', [ProductImageController::class, 'deleteImage'])->name('product-image.delete');
 
