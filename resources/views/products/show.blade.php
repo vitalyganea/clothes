@@ -31,9 +31,10 @@
                 @endif
             </h1>
 
-            <div class="mb-4">
-                <p class="text-lg"><b>Description:</b> {{ $product->description }}</p>
-            </div>
+                <div class="mb-4">
+                    <p class="text-lg"><b>Description:</b> {!! $product->description !!}</p>
+                </div>
+
 
                 <div class="mb-4">
                     <p class="text-lg"><b>Size:</b> {{$product->productSize->size_name }}</p>
