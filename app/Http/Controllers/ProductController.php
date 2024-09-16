@@ -69,8 +69,6 @@ class ProductController extends Controller
         $product->size_id = $request->size_id;
         $product->save();
 
-
-
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('public/product_images');
@@ -83,16 +81,15 @@ class ProductController extends Controller
             }
         }
 
-        return redirect()->route('shops.index')->with('success', 'Product created successfully!');
+        return redirect()->route('shops.products', $product->shop_id)->with('success', 'Product created successfully!');
     }
 
     public function edit($productId)
     {
-
         $product = Product::where('id', $productId)->firstOrFail();
-
-
-        return view('products.edit', compact('product'));
+        $productSizes = Size::all();
+        $productCategories = ProductCategory::all();
+        return view('products.edit', compact(['product', 'productSizes', 'productCategories']));
     }
 
     // Update product
@@ -127,9 +124,8 @@ class ProductController extends Controller
         }
 
         // Flash a success message
-        session()->flash('success', 'Product updated successfully');
-
-        return redirect()->route('products.edit', $product->id);
+        return redirect()->route('products.edit', $product->id)
+            ->with('success', 'Product has been updated successfully.');
     }
 
 
