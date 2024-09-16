@@ -16,7 +16,13 @@
                         </a>
                     </div>
                 @else
-                    <img src="https://via.placeholder.com/600x400" class="w-full h-auto object-cover rounded-lg" alt="No image available">
+
+                    <a href="https://via.placeholder.com/600x400" data-lightbox="product-gallery" data-title="{{ $product->name }}">
+                        <img src="https://via.placeholder.com/600x400" class="rounded main-center-cropped" alt="{{ $product->name }}">
+                    </a>
+                    @php
+                        $remainingImages = null;
+                    @endphp
                 @endif
             </div>
 
@@ -68,6 +74,7 @@
                 </div>
 
             </div>
+            @if($remainingImages)
                 @foreach ($remainingImages as $image)
                     <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
                         <a href="{{ $image->path }}" data-lightbox="product-gallery" data-title="{{ $product->name }}">
@@ -75,7 +82,7 @@
                         </a>
                     </div>
                 @endforeach
-
+            @endif
         </div>
     </div>
 
