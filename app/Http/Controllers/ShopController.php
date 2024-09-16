@@ -40,7 +40,7 @@ class ShopController extends Controller
 
         $shop->save();
 
-        return redirect()->route('shops.index')->with('success', 'Shop created successfully!');
+        return redirect()->route('shop.my-shops')->with('success', 'Shop created successfully!');
     }
 
     // Display a listing of the shops
@@ -113,7 +113,7 @@ class ShopController extends Controller
 
         $shop->delete();
 
-        return redirect()->route('shops.index')->with('success', 'Shop deleted successfully!');
+        return redirect()->route('shop.my-shops')->with('success', 'Shop deleted successfully!');
     }
 
 }

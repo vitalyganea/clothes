@@ -275,7 +275,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 // Perform the delete action (e.g., send a request to your server)
-                fetch(`/products/images/${imageId}`, {
+                fetch(`product-image.delete/${imageId}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
