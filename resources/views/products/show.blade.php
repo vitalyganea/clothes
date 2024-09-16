@@ -60,6 +60,13 @@
                     </p>
                 </div>
 
+                <div class="mb-4">
+                    <p class="text-lg">
+                        <b>Posted:</b>
+                        {{$product->created_at->diffForHumans()}}
+                    </p>
+                </div>
+
             </div>
                 @foreach ($remainingImages as $image)
                     <div class="col-lg-2 col-md-3 col-sm-4 mb-4">

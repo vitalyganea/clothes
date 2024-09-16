@@ -42,7 +42,7 @@
                     </a>
                 </div>
             @empty
-                <p>No products available.</p>
+{{--                <p>No products available.</p>--}}
             @endforelse
         </div>
     </div>
@@ -75,10 +75,6 @@
 
     .product-card:hover .card-img {
         transform: scale(1.1);
-    }
-
-    .product-card:hover {
-        transform: scale(1.05);
     }
 
     .card-body {

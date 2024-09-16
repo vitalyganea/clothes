@@ -6,26 +6,53 @@
         <div class="row" id="product-list">
             @forelse ($products as $product)
                 <div class="col-md-3 col-sm-6 product-item">
-                    <a href="{{ route('products.show', $product->id) }}">
                         <div class="card mb-4 product-card">
-                            <!-- If the product has an image -->
+                            <!-- If the product has images -->
                             @if ($product->images->count() > 0)
                                 <div class="image-container">
-                                    <img src="{{ asset($product->images->first()->path) }}" class="card-img" alt="{{ $product->name }}">
+                                    @foreach ($product->images as $index => $image)
+                                        <img src="{{ asset($image->path) }}" class="card-img" alt="{{ $product->name }}" data-index="{{ $index }}">
+                                    @endforeach
+                                    <div class="image-navigation">
+                                        <button class="nav-button left">
+                                            <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                                        </button>
+                                        <button class="nav-button right">
+                                            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             @else
                                 <div class="image-container">
-{{--                                    <img src="https://via.placeholder.com/150" class="card-img" alt="No image available">--}}
+                                    <img src="https://via.placeholder.com/150" class="card-img" alt="No image available">
                                 </div>
                             @endif
-                            <div class="card-body title-container">
-                                <h5 class="card-title">{{ $product->name }}</h5>
-                            </div>
+                            <a href="{{ route('products.show', $product->id) }}">
+                                <div class="card-body title-container">
+                                    <h5 class="card-title fw-bold">{{ $product->name }}</h5>
+                                </div>
+                                <div class="container">
+                                    <div class="row text-center mb-4">
+                                        <div class="col-md-3">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                            {{count($product->uniqueViews)}}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p>
+                                                {{$product->productCategory['name']}}
+                                            </p>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <i class="fa fa-arrows-alt" aria-hidden="true"></i>
+                                            {{$product->productSize['size_name']}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
-                    </a>
                 </div>
             @empty
-                <p>No products available.</p>
+{{--                <p>No products available.</p>--}}
             @endforelse
         </div>
 
@@ -88,6 +115,37 @@
         };
 
         window.addEventListener('scroll', onScroll);
+
+        document.querySelectorAll('.image-container').forEach(container => {
+            const images = Array.from(container.querySelectorAll('img'));
+            const leftButton = container.querySelector('.nav-button.left');
+            const rightButton = container.querySelector('.nav-button.right');
+            let currentIndex = 0;
+
+            // Show the first image by default
+            images[currentIndex].classList.add('active');
+
+            // Function to show image at given index
+            const showImage = (index) => {
+                images.forEach((img, i) => {
+                    img.classList.toggle('active', i === index);
+                });
+                currentIndex = index;
+            };
+
+            // Event listener for left button
+            leftButton.addEventListener('click', () => {
+                const newIndex = (currentIndex - 1 + images.length) % images.length;
+                showImage(newIndex);
+            });
+
+            // Event listener for right button
+            rightButton.addEventListener('click', () => {
+                const newIndex = (currentIndex + 1) % images.length;
+                showImage(newIndex);
+            });
+        });
+
     });
 
 </script>
@@ -116,18 +174,49 @@
         object-fit: cover;
         width: 100%;
         transition: transform 0.3s ease; /* Smooth transition for hover effect */
+        display: none; /* Hide all images by default */
+    }
+
+    .card-img.active {
+        display: block; /* Show only the active image */
     }
 
     .product-card:hover .card-img {
         transform: scale(1.1); /* Zoom out effect */
     }
 
-    .product-card:hover {
-        transform: scale(1.05); /* Optional: Zoom out the entire card slightly */
-    }
-
     .card-body {
         text-align: center;
+    }
+
+    .image-navigation {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: space-between;
+        transform: translateY(-50%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .nav-button {
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: background 0.3s ease;
+    }
+
+    .nav-button:hover {
+        background: rgba(0, 0, 0, 0.8);
+    }
+
+    .image-container:hover .image-navigation {
+        opacity: 1; /* Show navigation on hover */
     }
 
     /* Media query for mobile devices */
@@ -148,7 +237,8 @@
         text-decoration: none !important; /* Remove underline on hover and focus */
     }
 
-    .title-container{
-        height: 80px;
+    .title-container {
+        height: 50px;
     }
+
 </style>

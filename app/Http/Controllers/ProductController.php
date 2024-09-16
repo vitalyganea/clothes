@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductImage;
+use App\Models\ProductView;
 use App\Models\Shop;
 use App\Models\Size;
 use Illuminate\Http\Request;
@@ -25,7 +26,7 @@ class ProductController extends Controller
         }
 
         // Fetch paginated products
-        $products = $query->paginate(12); // 12 products per page
+        $products = $query->with(['images','shop', 'productCategory', 'productSize', 'uniqueViews'])->paginate(12); // 12 products per page
 
         if ($request->ajax()) {
             return response()->view('products.partials.product-list', compact('products'));
@@ -45,7 +46,7 @@ class ProductController extends Controller
         $shop = Shop::find($shopId);
         $productSizes = Size::all();
         $productCategories = ProductCategory::all();
-        return view('products.create', compact(['shop', 'productCategories', 'productSizes']));
+        return view('products.create', compact(['shop', 'productCategories']));
     }
 
     public function store(Request $request, $shopId)
@@ -145,9 +146,25 @@ class ProductController extends Controller
 
     public function show($productId)
     {
-        $product = Product::with(['images','shop', 'productCategory', 'productSize'])->findOrFail($productId);
+
+        $ipAddress = request()->ip();
+        if (!ProductView::where('product_id', $productId)->where('ip_address', $ipAddress)->exists()) {
+            ProductView::create([
+                'product_id' => $productId,
+                'ip_address' => $ipAddress,
+            ]);
+        }
+
+        $product = Product::with(['images','shop', 'productCategory', 'productSize', 'uniqueViews'])->findOrFail($productId);
 
         return view('products.show', compact('product'));
+    }
+
+    public function getSizesByCategory($categoryId)
+    {
+        $sizes = Size::where('category_id', $categoryId)->get();
+
+        return response()->json($sizes);
     }
 }
 

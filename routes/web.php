@@ -23,6 +23,7 @@ Route::resource('shops', ShopController::class);
 Route::get('my-shops', [ShopController::class,'myShops'])->name('shop.my-shops')->middleware('auth');
 Route::get('shops/{shop}/products/create', [ProductController::class, 'create'])->name('products.create');
 Route::post('shops/{shop}/products', [ProductController::class, 'store'])->name('products.store');
+Route::get('/category/{categoryId}/sizes', [ProductController::class, 'getSizesByCategory'])->name('category.sizes');
 
 
 Route::get('/shops/{id}/edit', [ShopController::class, 'edit'])->name('shops.edit');

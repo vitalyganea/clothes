@@ -57,7 +57,7 @@
                 <label for="category_id" class="form-label">Select Category:</label>
                 <select class="form-select" id="category_id" name="category_id" required>
                     @foreach($productCategories as $productCategory)
-                        <option value="{{$productCategory->id}}">{{$productCategory->name}}</option>
+                        <option value="{{ $productCategory->id }}">{{ $productCategory->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -66,9 +66,7 @@
             <div class="form-group mb-3">
                 <label for="size_id" class="form-label">Select Size:</label>
                 <select class="form-select" id="size_id" name="size_id" required>
-                    @foreach($productSizes as $productSize)
-                        <option value="{{$productSize->id}}">{{$productSize->size_name}}</option>
-                    @endforeach
+                    <!-- This will be dynamically populated via AJAX -->
                 </select>
             </div>
 
@@ -203,5 +201,51 @@
             });
             fileInput.files = dataTransfer.files; // Set the updated files list
         }
+
+
+
+        const categorySelect = document.getElementById('category_id');
+        const sizeSelect = document.getElementById('size_id');
+
+        // Function to fetch sizes based on category
+        function fetchSizes(categoryId) {
+            fetch(`/category/${categoryId}/sizes`)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear existing options
+                    sizeSelect.innerHTML = '';
+
+                    // Populate the size select dropdown with new options
+                    data.forEach(size => {
+                        const option = document.createElement('option');
+                        option.value = size.id;
+                        option.textContent = size.size_name;
+
+                        // Select the size if it matches the old value (useful for edit forms)
+                        @if(old('size_id'))
+                        if (size.id == "{{ old('size_id') }}") {
+                            option.selected = true;
+                        }
+                        @endif
+
+                        sizeSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching sizes:', error);
+                });
+        }
+
+        // Fetch sizes on page load for the default category
+        const initialCategoryId = categorySelect.value;
+        if (initialCategoryId) {
+            fetchSizes(initialCategoryId);
+        }
+
+        // Listen for category selection changes
+        categorySelect.addEventListener('change', function () {
+            const categoryId = this.value;
+            fetchSizes(categoryId);
+        });
     });
 </script>

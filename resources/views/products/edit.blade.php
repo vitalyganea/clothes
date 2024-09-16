@@ -100,7 +100,6 @@
     </div>
 @endsection
 
-<!-- Styles -->
 <style>
     .relative {
         position: relative;
@@ -220,6 +219,47 @@
                 });
             });
         }
+
+        // Fetch sizes based on the selected category
+        const categorySelect = document.getElementById('category_id');
+        const sizeSelect = document.getElementById('size_id');
+
+        function fetchSizes(categoryId) {
+            fetch(`/category/${categoryId}/sizes`)
+                .then(response => response.json())
+                .then(data => {
+                    sizeSelect.innerHTML = ''; // Clear existing options
+
+                    data.forEach(size => {
+                        const option = document.createElement('option');
+                        option.value = size.id;
+                        option.textContent = size.size_name;
+
+                        @if(old('size_id'))
+                        if (size.id == "{{ old('size_id') }}") {
+                            option.selected = true;
+                        }
+                        @endif
+
+                        sizeSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching sizes:', error);
+                });
+        }
+
+        // Fetch sizes on page load if the category is selected
+        const initialCategoryId = categorySelect.value;
+        if (initialCategoryId) {
+            fetchSizes(initialCategoryId);
+        }
+
+        // Listen for category changes
+        categorySelect.addEventListener('change', function () {
+            const categoryId = this.value;
+            fetchSizes(categoryId);
+        });
     });
 
     // Function to handle image deletion
@@ -234,49 +274,39 @@
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                $.ajax({
-                    url: '{{ route("product-image.delete", ":id") }}'.replace(':id', imageId),
-                    type: 'DELETE',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            Swal.fire({
-                                title: 'Deleted!',
-                                text: 'Image deleted successfully.',
-                                icon: 'success',
-                                timer: 1500,
-                                showConfirmButton: false
-                            });
-                            $('#image-container-' + imageId).fadeOut(300, function () {
-                                $(this).remove();
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Error!',
-                                text: 'Failed to delete the image.',
-                                icon: 'error'
-                            });
-                        }
-                    },
-                    error: function (xhr) {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'An error occurred while deleting the image.',
-                            icon: 'error'
-                        });
+                // Perform the delete action (e.g., send a request to your server)
+                fetch(`/products/images/${imageId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     }
-                });
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                'The image has been deleted.',
+                                'success'
+                            );
+                            document.getElementById('image-container-' + imageId).remove();
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'Something went wrong.',
+                                'error'
+                            );
+                        }
+                    });
             }
         });
     }
 
-    // Function to remove newly added image preview
-    function removeNewImage(index) {
-        const imagePreview = document.getElementById('new-image-' + index);
-        if (imagePreview) {
-            imagePreview.remove();
+    // Function to handle new image removal
+    window.removeNewImage = function (index) {
+        const newImage = document.getElementById('new-image-' + index);
+        if (newImage) {
+            newImage.remove();
         }
     }
 </script>

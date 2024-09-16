@@ -39,7 +39,7 @@
                     </a>
                 </div>
             @empty
-                <p>No products available.</p>
+{{--                <p>No products available.</p>--}}
             @endforelse
         </div>
     </div>
@@ -73,10 +73,6 @@
 
     .product-card:hover .card-img {
         transform: scale(1.1); /* Zoom out effect */
-    }
-
-    .product-card:hover {
-        transform: scale(1.05); /* Optional: Zoom out the entire card slightly */
     }
 
     .card-body {
