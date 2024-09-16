@@ -145,16 +145,20 @@
                 console.error(error);
             });
 
-        // Event listener for file input change
+        // dynamic image add/remove
+
         const fileInput = document.getElementById('images');
+        const previewContainer = document.getElementById('image-preview-container');
+        const fileMap = new Map(); // Map to keep track of files and their preview elements
 
         if (fileInput) {
             fileInput.addEventListener('change', function (event) {
-                const previewContainer = document.getElementById('image-preview-container');
-
                 // Only remove dynamically added images, keep existing ones
                 const dynamicPreviews = document.querySelectorAll('.new-image');
                 dynamicPreviews.forEach(image => image.remove());
+
+                // Clear the fileMap
+                fileMap.clear();
 
                 Array.from(event.target.files).forEach((file, index) => {
                     const reader = new FileReader();
@@ -164,18 +168,19 @@
                         imgPreview.id = 'new-image-' + index;
 
                         imgPreview.innerHTML = `
-                        <a href="${e.target.result}" data-lightbox="product-gallery" data-title="New Image">
-                            <div class="icon-container">
-                                <i class="fa fa-eye"></i>
-                            </div>
-                            <img src="${e.target.result}" class="center-cropped" alt="New Image">
-                            <div class="trash-icon-container" onclick="removeNewImage(${index})">
-                                <i class="fa fa-trash"></i>
-                            </div>
-                        </a>
-                    `;
+                    <a href="${e.target.result}" data-lightbox="product-gallery" data-title="New Image">
+                        <div class="icon-container">
+                            <i class="fa fa-eye"></i>
+                        </div>
+                        <img src="${e.target.result}" class="center-cropped" alt="New Image">
+                        <div class="trash-icon-container" onclick="confirmRemoveNewImage(event, '${file.name}')">
+                            <i class="fa fa-trash"></i>
+                        </div>
+                    </a>
+                `;
 
                         previewContainer.appendChild(imgPreview);
+                        fileMap.set(file.name, imgPreview); // Map file name to preview element
 
                         // Initialize Lightbox for the new image
                         lightbox.init();
@@ -185,24 +190,49 @@
             });
         }
 
-        // Function to remove dynamically added image previews
-        window.removeNewImage = function (index) {
-            const imagePreview = document.getElementById('new-image-' + index);
-            if (imagePreview) {
-                imagePreview.remove();
-            }
+// Function to show Swal confirmation dialog
+        window.confirmRemoveNewImage = function (event, fileName) {
+            event.preventDefault();
+            event.stopPropagation();
 
-            // Remove the file from the input's files list
-            const dataTransfer = new DataTransfer();
-            Array.from(fileInput.files).forEach((file, i) => {
-                if (i !== index) {
-                    dataTransfer.items.add(file);
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to remove this image?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    removeNewImage(fileName); // If confirmed, call the actual removal function
+                    Swal.fire(
+                        'Deleted!',
+                        'Your image has been deleted.',
+                        'success'
+                    );
                 }
             });
-            fileInput.files = dataTransfer.files; // Set the updated files list
-        }
+        };
 
+        window.removeNewImage = function (fileName) {
+            const imgPreview = fileMap.get(fileName);
+            if (imgPreview) {
+                imgPreview.remove(); // Remove the preview element
+                fileMap.delete(fileName); // Remove from fileMap
 
+                // Update file input
+                const dataTransfer = new DataTransfer();
+                Array.from(fileInput.files).forEach((file) => {
+                    if (file.name !== fileName) {
+                        dataTransfer.items.add(file);
+                    }
+                });
+                fileInput.files = dataTransfer.files; // Set the updated files list
+            }
+        };
+
+        // dynamic image add/remove
 
         const categorySelect = document.getElementById('category_id');
         const sizeSelect = document.getElementById('size_id');
