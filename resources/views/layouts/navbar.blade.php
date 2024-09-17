@@ -21,20 +21,6 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('/shop') }}">Contact</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle @if(Route::is('category.index')) active @endif" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Categories
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        @foreach($productCategories as $productCategory)
-                            <li>
-                                <a class="dropdown-item" href="{{ route('category.index', $productCategory->id) }}">
-                                    {{ $productCategory->name }}
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </li>
             </ul>
 
             <!-- Right Side Of Navbar -->

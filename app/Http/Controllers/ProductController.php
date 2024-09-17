@@ -15,25 +15,63 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
 
-    public function index(Request $request, $categoryId = null)
-    {
-        // Start query with eager loading
-        $query = Product::with('images');
+    public function index(Request $request) {
+        $products = Product::query();
 
-        // Conditionally add where clause if categoryId is set
-        if (!is_null($categoryId)) {
-            $query->where('category_id', $categoryId);
+        // Apply filters if they exist
+        if ($request->has('category') && $request->get('category') != null) {
+            $products->where('category_id', $request->category);
+        }
+        if ($request->has('size') && $request->get('size') != null) {
+            $products->where('size_id', $request->size);
         }
 
-        // Fetch paginated products
-        $products = $query->with(['images','shop', 'productCategory', 'productSize', 'uniqueViews'])->paginate(12); // 12 products per page
-
-        if ($request->ajax()) {
-            return response()->view('products.partials.product-list', compact('products'));
+        // Apply min and max price filters
+        if ($request->filled('min_price') && $request->filled('max_price')) {
+            $products->where('price', '>=', (int)$request->min_price);
         }
 
-        return view('products.index', compact('products'));
+        if ($request->filled('max_price') && $request->filled('min_price')) {
+            $products->where('price', '<=', (int)$request->max_price);
+        }
+
+
+        switch ($request->sort) {
+            case 'price_asc':
+                $products->orderBy('price', 'asc');
+                break;
+            case 'price_desc':
+                $products->orderBy('price', 'desc');
+                break;
+            case 'created_at_asc':
+                $products->orderBy('created_at', 'asc');
+                break;
+            case 'created_at_desc':
+                $products->orderBy('created_at', 'desc');
+                break;
+            default:
+                $products->orderBy('created_at', 'desc'); // Default sorting if no sort option is selected
+                break;
+        }
+
+        $products = $products->paginate(12);
+
+        // Get the min and max price from the database
+        $minPrice = Product::min('price');
+        $maxPrice = Product::max('price');
+
+        // Pass the previously selected category and size to the view
+        return view('products.index', [
+            'products' => $products,
+            'productCategories' => ProductCategory::all(),
+            'selectedCategory' => $request->category,
+            'selectedSize' => $request->size,
+            'minPrice' => $request->min_price ?? $minPrice,
+            'maxPrice' => $request->max_price ?? $maxPrice,
+            'filterIsEmpty' => $this->filterIsEmpty($request, $minPrice, $maxPrice),
+        ]);
     }
+
 
     public function shopProducts($shopId)
     {
@@ -165,6 +203,23 @@ class ProductController extends Controller
         $sizes = Size::where('category_id', $categoryId)->get();
 
         return response()->json($sizes);
+    }
+
+    /**
+     * @param Request $request
+     * @param $minPrice
+     * @param $maxPrice
+     * @return bool
+     */
+    public function filterIsEmpty(Request $request, $minPrice, $maxPrice): bool
+    {
+        return (
+            $request->category === null &&
+            $request->size === null &&
+            $request->sort === null &&
+            ($request->min_price === null || $request->min_price === $minPrice) &&
+            ($request->max_price === null || $request->max_price === $maxPrice)
+        );
     }
 }
 

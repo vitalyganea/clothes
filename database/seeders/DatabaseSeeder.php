@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
 
          User::firstOrCreate(['email' => 'zzzvitalii@gmail.com'], [
             'name' => 'Administrator',
-            'email' => 'crm.admin@vebo.io',
+            'email' => 'zzzvitalii@gmail.com',
             'email_verified_at' => now(),
             'password' => Hash::make('dinamic22'), // password
             'remember_token' => Str::random(10),

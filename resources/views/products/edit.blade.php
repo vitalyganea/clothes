@@ -198,11 +198,10 @@
                         option.value = size.id;
                         option.textContent = size.size_name;
 
-                        @if(old('size_id'))
-                        if (size.id == "{{ old('size_id') }}") {
+                        // Set selected option if it's the old value
+                        if (size.id == "{{ old('size_id', $product->size_id) }}") {
                             option.selected = true;
                         }
-                        @endif
 
                         sizeSelect.appendChild(option);
                     });
