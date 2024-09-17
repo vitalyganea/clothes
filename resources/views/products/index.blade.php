@@ -7,11 +7,14 @@
         <div class="accordion" id="filterAccordion">
             <div class="accordion-item mb-4">
                 <h2 class="accordion-header" id="headingOne">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="{{ $filterIsEmpty ? 'false' : 'true' }}" aria-controls="collapseOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="{{ $filterIsEmpty ? 'false' : 'true' }}"
+                            aria-controls="collapseOne">
                         Filter Products
                     </button>
                 </h2>
-                <div id="collapseOne" class="accordion-collapse collapse {{ $filterIsEmpty ? '' : 'show' }}" aria-labelledby="headingOne" data-bs-parent="#filterAccordion">
+                <div id="collapseOne" class="accordion-collapse collapse {{ $filterIsEmpty ? '' : 'show' }}"
+                     aria-labelledby="headingOne" data-bs-parent="#filterAccordion">
                     <div class="accordion-body">
                         <form id="filter-form" action="{{ url()->current() }}" method="GET">
                             <div class="row">
@@ -39,9 +42,13 @@
                                     <div class="form-group">
                                         <label for="price-range" class="d-block">Price Range</label>
                                         <div class="price-range-container">
-                                            <input type="number" id="min-price" name="min_price" class="form-control min-price" placeholder="Min Price" value="{{$minPrice}}">
+                                            <input type="number" id="min-price" name="min_price"
+                                                   class="form-control min-price" placeholder="Min Price"
+                                                   value="{{$minPrice}}">
                                             <div class="divider"></div>
-                                            <input type="number" id="max-price" name="max_price" class="form-control max-price" placeholder="Max Price" value="{{$maxPrice}}">
+                                            <input type="number" id="max-price" name="max_price"
+                                                   class="form-control max-price" placeholder="Max Price"
+                                                   value="{{$maxPrice}}">
                                         </div>
                                     </div>
                                 </div>
@@ -50,17 +57,26 @@
                                     <label for="sort">Sort By</label>
                                     <select id="sort-select" name="sort" class="form-control">
                                         <option value="">Default</option>
-                                        <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price: Low to High</option>
-                                        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price: High to Low</option>
-                                        <option value="created_at_asc" {{ request('sort') == 'created_at_asc' ? 'selected' : '' }}>Date: Oldest First</option>
-                                        <option value="created_at_desc" {{ request('sort') == 'created_at_desc' ? 'selected' : '' }}>Date: Newest First</option>
+                                        <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>
+                                            Price: Low to High
+                                        </option>
+                                        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>
+                                            Price: High to Low
+                                        </option>
+                                        <option value="created_at_asc" {{ request('sort') == 'created_at_asc' ? 'selected' : '' }}>
+                                            Date: Oldest First
+                                        </option>
+                                        <option value="created_at_desc" {{ request('sort') == 'created_at_desc' ? 'selected' : '' }}>
+                                            Date: Newest First
+                                        </option>
                                     </select>
                                 </div>
 
                                 <div class="col-md-4 mt-4">
                                     <button type="submit" class="btn btn-primary">Apply</button>
                                     @if(!$filterIsEmpty)
-                                        <button type="button" id="reset-filters" class="btn btn-secondary ms-2">Reset</button>
+                                        <button type="button" id="reset-filters" class="btn btn-secondary ms-2">Reset
+                                        </button>
                                     @endif
                                 </div>
                             </div>
@@ -79,7 +95,8 @@
                         @if ($product->images->count() > 0)
                             <div class="image-container">
                                 @foreach ($product->images as $index => $image)
-                                    <img src="{{ asset($image->path) }}" class="card-img" alt="{{ $product->name }}" data-index="{{ $index }}">
+                                    <img src="{{ asset($image->path) }}" class="card-img" alt="{{ $product->name }}"
+                                         data-index="{{ $index }}">
                                 @endforeach
                                 <div class="image-navigation">
                                     <button class="nav-button left">
@@ -95,28 +112,39 @@
                                 <img src="https://via.placeholder.com/150" class="card-img" alt="No image available">
                             </div>
                         @endif
-                        <a href="{{ route('products.show', $product->id) }}">
-                            <div class="card-body title-container">
-                                <h5 class="card-title fw-bold">{{ $product->name }}</h5>
-                            </div>
-                            <div class="container">
-                                <div class="row text-center mb-4">
-                                    <div class="col-md-3">
+                        <div class="card-body title-container">
+                            <h5 class="card-title fw-bold">{{ $product->name }}</h5>
+                        </div>
+                        <div class="container">
+                            <div class="row text-center mb-4 d-flex justify-content-between align-items-center"> <!-- Flexbox container -->
+                                <div class="col-md-4 text-left"> <!-- Left aligned category -->
+                                    {{$product->productCategory['name']}}
+                                </div>
+                                <div class="col-md-4 text-center"> <!-- Center aligned size -->
+                                    {{$product->productSize['size_name']}}
+                                </div>
+                                <div class="col-md-4 text-right circle-counter-container">
+                                    <!-- Right aligned views inside a circle -->
+                                    <div class="circle-counter">
                                         <i class="fa fa-eye" aria-hidden="true"></i>
                                         {{count($product->uniqueViews)}}
                                     </div>
-                                    <div class="col-md-6">
-                                        <p>
-                                            {{$product->productCategory['name']}}
-                                        </p>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <i class="fa fa-arrows-alt" aria-hidden="true"></i>
-                                        {{$product->productSize['size_name']}}
-                                    </div>
                                 </div>
                             </div>
-                        </a>
+
+                            <div class="row text-center mb-4 d-flex align-items-center"> <!-- Flex container -->
+                                <div class="col-md-12 d-flex justify-content-between align-items-center">
+                                    <!-- Price and details in one flex container -->
+                                    <span class="custom-label"> <!-- Using custom label class -->
+                {{$product->price}} MDL
+            </span>
+                                    <a href="{{ route('products.show', $product->id) }}" class="hover-reverse">
+                                        <!-- Hover-reverse button -->
+                                        Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             @empty
@@ -132,7 +160,7 @@
 @endsection
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const categorySelect = document.getElementById('category-select');
         const sizesSelect = document.getElementById('sizes-select');
         const previouslySelectedSize = "{{ request('size') }}"; // Fetch previously selected size from the server
@@ -251,7 +279,7 @@
 
         // Reset filters functionality
         const resetButton = document.getElementById('reset-filters');
-        if(resetButton !== null) {
+        if (resetButton !== null) {
             resetButton.addEventListener('click', function () {
                 const form = document.getElementById('filter-form');
                 form.reset();
@@ -450,7 +478,49 @@
     .accordion-button:not(.collapsed) {
         color: var(--bs-accordion-active-color);
         background-color: transparent !important;
-        box-shadow: inset 0 calc(-1* var(--bs-accordion-border-width)) 0 var(--bs-accordion-border-color);
+        box-shadow: inset 0 calc(-1 * var(--bs-accordion-border-width)) 0 var(--bs-accordion-border-color);
     }
 
+    .custom-label {
+        background-color: transparent;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        border: 1px solid #212529; /* Border for label */
+    }
+
+    .hover-reverse {
+        background-color: transparent;
+        color: #212529; /* Primary color for text */
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        border: 1px solid #212529; /* Primary border */
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .hover-reverse:hover {
+        background-color: #212529; /* Background color on hover */
+        color: #fff; /* Text color on hover */
+    }
+
+    .circle-counter {
+        background-color: #f0f0f0; /* Light gray background for the circle */
+        color: #000; /* Text color */
+        border-radius: 50%; /* Makes it circular */
+        width: 50px; /* Fixed width */
+        height: 50px; /* Fixed height */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem; /* Adjust font size to fit */
+        line-height: 1.2; /* Adjust line height for vertical centering */
+    }
+
+    .circle-counter-container {
+        display: flex;
+        justify-content: flex-end; /* Aligns the circle to the right */
+        align-items: center;
+    }
+    .circle-counter i {
+        margin-right: 5px; /* Adds some space between the icon and the text */
+    }
 </style>

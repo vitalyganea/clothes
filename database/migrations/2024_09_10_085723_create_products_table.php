@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('shop_id');
             $table->string('name');
             $table->text('description');
-            $table->text('price');
+            $table->integer('price');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('size_id');
             $table->unsignedBigInteger('category_id');
