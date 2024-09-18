@@ -21,6 +21,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('/shop') }}">Contact</a>
                 </li>
+                <li class="nav-item">
+                    <form class="d-flex position-relative" id="searchForm" action="{{ route('search') }}" method="GET">
+                        <input class="form-control me-2" type="search" name="query" id="searchQuery" placeholder="Search Products or Shops" aria-label="Search">
+                        <div id="searchResults" class="d-none position-absolute bg-white border rounded shadow-sm w-100" style="top: 100%; left: 0; z-index: 1000;"></div>
+                    </form>
+                </li>
             </ul>
 
             <!-- Right Side Of Navbar -->

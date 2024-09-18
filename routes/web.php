@@ -3,6 +3,7 @@
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductImageController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +58,10 @@ Route::get('/shops/create', [ShopController::class, 'create'])->name('shops.crea
 
 // Route to store a newly created shop
 Route::post('/shops', [ShopController::class, 'store'])->name('shops.store');
+
+
+Route::get('/search', [SearchController::class, 'search'])->name('search');
+
 
 Auth::routes();
 
