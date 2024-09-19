@@ -45,9 +45,6 @@ class ProductController extends Controller
             case 'created_at_asc':
                 $products->orderBy('created_at', 'asc');
                 break;
-            case 'created_at_desc':
-                $products->orderBy('created_at', 'desc');
-                break;
             default:
                 $products->orderBy('created_at', 'desc');
                 break;

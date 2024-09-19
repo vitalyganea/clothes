@@ -74,10 +74,7 @@
 
                                 <div class="col-md-4 mt-4">
                                     <button type="submit" class="btn btn-primary">Apply</button>
-                                    @if(!$filterIsEmpty)
-                                        <button type="button" id="reset-filters" class="btn btn-secondary ms-2">Reset
-                                        </button>
-                                    @endif
+                                    <button type="button" id="reset-filters" class="btn btn-secondary ms-2">Reset</button>
                                 </div>
                             </div>
                         </form>
@@ -150,7 +147,16 @@
                 {{--                <p>No products available.</p>--}}
             @endforelse
         </div>
-
+            <div class="container text-center mt-5" id="no-products" style="display:none;">
+                <div class="card shadow-sm">
+                    <div class="card-body p-5">
+                        <i class="fa fa-box-open fa-4x mb-4" aria-hidden="true"></i>
+                        <h3 class="card-title">No Products Found</h3>
+                        <p class="card-text">Sorry, we couldn't find any products that match your search criteria. Try adjusting your filters or check back later!</p>
+                        <a href="/" class="btn btn-primary mt-3">Go Back to Shop</a>
+                    </div>
+                </div>
+            </div>
         <!-- Invisible div for pagination -->
         <div id="pagination" style="display: none;">
             {{ $products->links('pagination::bootstrap-4') }}
@@ -165,8 +171,17 @@
         const filterForm = document.getElementById('filter-form');
         const productList = document.getElementById('product-list');
         const pagination = document.getElementById('pagination');
-        const previouslySelectedSize = "{{ request('size') }}"; // Fetch previously selected size from the server
+        const noProductsDiv = document.getElementById('no-products'); // Div to show when no products are found
+        const resetButton = document.getElementById('reset-filters');
+        const minPriceInput = document.getElementById('min-price');
+        const maxPriceInput = document.getElementById('max-price');
+        const sortSelect = document.getElementById('sort-select');
         let loadingMore = false;
+
+        // Extract URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const previouslySelectedSize = urlParams.get('size') || '';
+        const previouslySelectedCategory = urlParams.get('category') || '';
 
         // Initialize image navigation for image carousels
         const initializeImageNavigation = () => {
@@ -212,37 +227,46 @@
 
         // Function to update size options based on selected category
         const updateSizes = (categoryId) => {
-            fetch(`/category/${categoryId}/sizes`)
-                .then(response => response.json())
-                .then(sizes => {
-                    sizesSelect.innerHTML = '<option value="">All Sizes</option>';
+            if (categoryId === "") {
+                // If "All Categories" is selected, reset sizes to "All Sizes"
+                sizesSelect.innerHTML = '<option value="">All Sizes</option>';
+                sizesSelect.value = ""; // Deselect any selected size
+                sizesSelect.disabled = true; // Disable sizes select
+            } else {
+                // Fetch sizes for the selected category
+                fetch(`/category/${categoryId}/sizes`)
+                    .then(response => response.json())
+                    .then(sizes => {
+                        sizesSelect.innerHTML = '<option value="">All Sizes</option>';
+                        sizesSelect.disabled = false; // Enable sizes select
 
-                    let sizeFound = false;
+                        let sizeFound = false;
 
-                    sizes.forEach(size => {
-                        const option = document.createElement('option');
-                        option.value = size.id;
-                        option.textContent = size.size_name;
+                        sizes.forEach(size => {
+                            const option = document.createElement('option');
+                            option.value = size.id;
+                            option.textContent = size.size_name;
 
-                        if (size.id == previouslySelectedSize) {
-                            option.selected = true;
-                            sizeFound = true;
+                            if (size.id == previouslySelectedSize) {
+                                option.selected = true;
+                                sizeFound = true;
+                            }
+
+                            sizesSelect.appendChild(option);
+                        });
+
+                        if (!sizeFound) {
+                            sizesSelect.value = "";
                         }
-
-                        sizesSelect.appendChild(option);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching sizes:', error);
                     });
-
-                    if (!sizeFound) {
-                        sizesSelect.value = "";
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching sizes:', error);
-                });
+            }
         };
 
         // Function to update URL parameters without reloading the page
-        const updateURL = (categoryId, sizeId) => {
+        const updateURL = (categoryId, sizeId, minPrice, maxPrice, sortBy) => {
             let url = new URL(window.location.href);
             const params = new URLSearchParams(url.search);
 
@@ -258,7 +282,26 @@
                 params.set('size', sizeId);
             }
 
-            window.history.replaceState({}, '', `${url.pathname}?${params.toString()}`);
+            if (minPrice === "" && maxPrice === "") {
+                params.delete('min_price');
+                params.delete('max_price');
+            } else {
+                if (minPrice) params.set('min_price', minPrice);
+                if (maxPrice) params.set('max_price', maxPrice);
+            }
+
+            if (sortBy === "") {
+                params.delete('sort');
+            } else {
+                params.set('sort', sortBy);
+            }
+
+            // Remove URL parameters if no filters are applied
+            if (!params.toString()) {
+                history.replaceState({}, '', window.location.pathname);
+            } else {
+                window.history.replaceState({}, '', `${url.pathname}?${params.toString()}`);
+            }
         };
 
         // Function to fetch and display products based on filters
@@ -272,22 +315,20 @@
                     const newProducts = doc.querySelector('#product-list');
                     const newPagination = doc.querySelector('#pagination'); // The invisible div for pagination
 
-                    if (!newProducts || !newProducts.innerHTML.trim()) {
-                        return; // No more products to load
-                    }
+                    if (newProducts && newProducts.innerHTML.trim()) {
+                        if (append) {
+                            productList.insertAdjacentHTML('beforeend', newProducts.innerHTML);
+                        } else {
+                            productList.innerHTML = newProducts.innerHTML;
+                        }
 
-                    // Append or replace product list based on the call
-                    if (append) {
-                        productList.insertAdjacentHTML('beforeend', newProducts.innerHTML);
+                        initializeImageNavigation();
+                        pagination.innerHTML = newPagination.innerHTML;
+                        noProductsDiv.style.display = 'none'; // Hide "No products found" message
                     } else {
-                        productList.innerHTML = newProducts.innerHTML;
+                        productList.innerHTML = ''; // Clear the product list
+                        noProductsDiv.style.display = 'block'; // Show "No products found" message
                     }
-
-                    // Initialize image navigation for newly loaded products
-                    initializeImageNavigation();
-
-                    // Update pagination
-                    pagination.innerHTML = newPagination.innerHTML;
 
                     loadingMore = false;
                 })
@@ -297,34 +338,56 @@
                 });
         };
 
+        // Initialize size select based on the category and previously selected size
+        if (previouslySelectedCategory) {
+            categorySelect.value = previouslySelectedCategory;
+            updateSizes(previouslySelectedCategory);
+        }
+
+        // Set previously selected size
+        sizesSelect.value = previouslySelectedSize;
+
         // Event listener for the "Apply" button
         filterForm.addEventListener('submit', function (e) {
             e.preventDefault(); // Prevent normal form submission
-
             const formData = new FormData(filterForm);
-
-            // Fetch products with current filters
             fetchProducts(formData);
+            const categoryId = categorySelect.value;
+            const sizeId = sizesSelect.value;
+            const minPrice = minPriceInput.value;
+            const maxPrice = maxPriceInput.value;
+            const sortBy = sortSelect.value;
+            updateURL(categoryId, sizeId, minPrice, maxPrice, sortBy);
         });
 
         // Event listener for filter changes
         categorySelect.addEventListener('change', function () {
             const categoryId = this.value;
-            updateSizes(categoryId);
-            updateURL(categoryId, sizesSelect.value);
+            updateSizes(categoryId); // Update sizes for the selected category
+            updateURL(categoryId, sizesSelect.value, minPriceInput.value, maxPriceInput.value, sortSelect.value); // Update the URL
         });
 
         sizesSelect.addEventListener('change', function () {
-            const sizeId = this.value;
-            updateURL(categorySelect.value, sizeId);
+            updateURL(categorySelect.value, this.value, minPriceInput.value, maxPriceInput.value, sortSelect.value);
+        });
+
+        minPriceInput.addEventListener('input', function () {
+            updateURL(categorySelect.value, sizesSelect.value, this.value, maxPriceInput.value, sortSelect.value);
+        });
+
+        maxPriceInput.addEventListener('input', function () {
+            updateURL(categorySelect.value, sizesSelect.value, minPriceInput.value, this.value, sortSelect.value);
+        });
+
+        sortSelect.addEventListener('change', function () {
+            updateURL(categorySelect.value, sizesSelect.value, minPriceInput.value, maxPriceInput.value, this.value);
         });
 
         // Reset filters functionality
-        const resetButton = document.getElementById('reset-filters');
         if (resetButton !== null) {
             resetButton.addEventListener('click', function () {
                 filterForm.reset();
-                updateURL('', '');
+                updateURL('', '', '', '', '');
                 fetchProducts(new FormData(filterForm)); // Fetch products with reset filters
             });
         }
@@ -346,7 +409,7 @@
         });
 
         // Initial load
-        fetchProducts(new FormData(filterForm));
+        // fetchProducts(new FormData(filterForm));
 
         // Initialize image navigation for initially loaded products
         initializeImageNavigation();
