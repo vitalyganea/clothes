@@ -1,5 +1,3 @@
-<!-- resources/views/layouts/navbar.blade.php -->
-
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
     <div class="container">
         <a class="navbar-brand" href="{{ url('/') }}">
@@ -11,7 +9,7 @@
 
         <div class="collapse navbar-collapse" id="navbarContent">
             <!-- Left Side Of Navbar -->
-            <ul class="navbar-nav me-auto">
+            <ul class="navbar-nav me-auto align-items-center">
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('/') }}">Home</a>
                 </li>
@@ -21,7 +19,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('/shop') }}">Contact</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item d-flex align-items-center" style="margin-top: 5px;">
                     <form class="d-flex position-relative" id="searchForm" action="{{ route('search') }}" method="GET">
                         <input class="form-control me-2" type="search" name="query" id="searchQuery" placeholder="Search Products or Shops" aria-label="Search">
                         <div id="searchResults" class="d-none position-absolute bg-white border rounded shadow-sm w-100" style="top: 100%; left: 0; z-index: 1000;"></div>
@@ -30,7 +28,7 @@
             </ul>
 
             <!-- Right Side Of Navbar -->
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-center">
                 @guest
                     @if (Route::has('login'))
                         <li class="nav-item">
@@ -60,16 +58,18 @@
                                 My Shops
                             </a>
                             <div class="dropdown-item">
-                                <!-- Links for each flag -->
-                                <a href="{{ route('language.switch', ['lang' => 'ro']) }}">
-                                    <img class="lang-flag" src="{{ asset('assets/flags/ro.svg') }}" alt="Romanian">
-                                </a>
-                                <a href="{{ route('language.switch', ['lang' => 'ru']) }}">
-                                    <img class="lang-flag" src="{{ asset('assets/flags/ru.svg') }}" alt="Russian">
-                                </a>
-                                <a href="{{ route('language.switch', ['lang' => 'en']) }}">
-                                    <img class="lang-flag" src="{{ asset('assets/flags/en.svg') }}" alt="English">
-                                </a>
+                                <div class="language-switcher">
+                                    <!-- Inline flag links -->
+                                    <a href="{{ route('language.switch', ['lang' => 'ro']) }}">
+                                        <img class="lang-flag" src="{{ asset('assets/flags/ro.svg') }}" alt="Romanian">
+                                    </a>
+                                    <a href="{{ route('language.switch', ['lang' => 'ru']) }}">
+                                        <img class="lang-flag" src="{{ asset('assets/flags/ru.svg') }}" alt="Russian">
+                                    </a>
+                                    <a href="{{ route('language.switch', ['lang' => 'en']) }}">
+                                        <img class="lang-flag" src="{{ asset('assets/flags/en.svg') }}" alt="English">
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </li>
@@ -78,16 +78,3 @@
         </div>
     </div>
 </nav>
-<style>
-    .lang-flag {
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
-        margin-right: 10px; /* Space between flags */
-    }
-
-    .dropdown-item a {
-        display: inline-block; /* Ensure links are inline */
-        margin-right: 3px; /* Space between flags */
-    }
-</style>

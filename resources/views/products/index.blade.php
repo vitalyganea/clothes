@@ -4,8 +4,8 @@
     <div class="container">
         <h1>All Products</h1>
 
-        <div class="accordion" id="filterAccordion">
-            <div class="accordion-item mb-4">
+        <div class="accordion sticky-filter" id="filterAccordion">
+            <div class="accordion-item">
                 <h2 class="accordion-header" id="headingOne">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                             data-bs-target="#collapseOne" aria-expanded="{{ $filterIsEmpty ? 'false' : 'true' }}"
@@ -86,8 +86,7 @@
             </div>
         </div>
 
-
-        <div class="row" id="product-list">
+        <div class="row mt-4" id="product-list">
             @forelse ($products as $product)
                 <div class="col-md-3 col-sm-6 product-item">
                     <div class="card mb-4 product-card">
@@ -305,9 +304,6 @@
             const formData = new FormData(form);
             const params = new URLSearchParams(formData);
 
-            // Append the page number to the query parameters
-            params.append('page', page);
-
             fetch(`/?${params.toString()}`)
                 .then(response => response.text())
                 .then(html => {
@@ -355,172 +351,3 @@
     });
 
 </script>
-
-<style>
-    .product-card {
-        width: 100%;
-        height: 100%;
-        overflow: hidden; /* Ensure that any overflow is hidden */
-        position: relative; /* Position relative for positioning effects */
-        transition: transform 0.3s ease; /* Smooth transition for hover effect */
-    }
-
-    .image-container {
-        height: 200px; /* Default height */
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative; /* Position relative for positioning effects */
-    }
-
-    .card-img {
-        min-height: 100%;
-        object-fit: cover;
-        width: 100%;
-        transition: transform 0.3s ease; /* Smooth transition for hover effect */
-        display: none; /* Hide all images by default */
-    }
-
-    .card-img.active {
-        display: block; /* Show only the active image */
-    }
-
-    .product-card:hover .card-img {
-        transform: scale(1.1); /* Zoom out effect */
-    }
-
-    .card-body {
-        text-align: center;
-    }
-
-    .image-navigation {
-        position: absolute;
-        top: 50%;
-        left: 0;
-        right: 0;
-        display: flex;
-        justify-content: space-between;
-        transform: translateY(-50%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .nav-button {
-        background: rgba(0, 0, 0, 0.5);
-        color: #fff;
-        border: none;
-        padding: 10px;
-        cursor: pointer;
-        font-size: 18px;
-        transition: background 0.3s ease;
-    }
-
-    .nav-button:hover {
-        background: rgba(0, 0, 0, 0.8);
-    }
-
-    .image-container:hover .image-navigation {
-        opacity: 1; /* Show navigation on hover */
-    }
-
-    /* Media query for mobile devices */
-    @media (max-width: 767px) {
-        .image-container {
-            height: 400px; /* Increase height for mobile devices */
-        }
-    }
-
-    /* Remove underline from all links within product cards */
-    .product-card a {
-        text-decoration: none !important; /* Force remove underline */
-        color: inherit; /* Ensure text color is consistent with parent element */
-    }
-
-    .product-card a:hover,
-    .product-card a:focus {
-        text-decoration: none !important; /* Remove underline on hover and focus */
-    }
-
-    .title-container {
-        height: 50px;
-    }
-
-    .price-range-container {
-        display: flex;
-        align-items: center;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem; /* Adjust border radius as needed */
-        overflow: hidden; /* Ensures that the inputs and divider stay within the border */
-    }
-
-    .price-range-container .form-control {
-        border: none;
-        border-radius: 0;
-        border-right: 1px solid #ced4da; /* Divider line on the right of the first input */
-        border-left: 0;
-        border-top: 0;
-        border-bottom: 0;
-        box-shadow: none;
-    }
-
-    .price-range-container .form-control:last-child {
-        border-right: 0; /* Removes the border on the right of the second input */
-        border-left: 0;
-    }
-
-    .price-range-container .divider {
-        width: 1px; /* Width of the divider line */
-        background-color: #ced4da; /* Color of the divider line */
-        height: 100%; /* Full height of the inputs */
-    }
-
-    .accordion-button:not(.collapsed) {
-        color: var(--bs-accordion-active-color);
-        background-color: transparent !important;
-        box-shadow: inset 0 calc(-1 * var(--bs-accordion-border-width)) 0 var(--bs-accordion-border-color);
-    }
-
-    .custom-label {
-        background-color: transparent;
-        padding: 0.5rem 1rem;
-        border-radius: 0.25rem;
-        border: 1px solid #212529; /* Border for label */
-    }
-
-    .hover-reverse {
-        background-color: transparent;
-        color: #212529; /* Primary color for text */
-        padding: 0.5rem 1rem;
-        border-radius: 0.25rem;
-        border: 1px solid #212529; /* Primary border */
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .hover-reverse:hover {
-        background-color: #212529; /* Background color on hover */
-        color: #fff; /* Text color on hover */
-    }
-
-    .circle-counter {
-        background-color: #f0f0f0; /* Light gray background for the circle */
-        color: #000; /* Text color */
-        border-radius: 50%; /* Makes it circular */
-        width: 50px; /* Fixed width */
-        height: 50px; /* Fixed height */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1rem; /* Adjust font size to fit */
-        line-height: 1.2; /* Adjust line height for vertical centering */
-    }
-
-    .circle-counter-container {
-        display: flex;
-        justify-content: flex-end; /* Aligns the circle to the right */
-        align-items: center;
-    }
-    .circle-counter i {
-        margin-right: 5px; /* Adds some space between the icon and the text */
-    }
-</style>
