@@ -78,3 +78,11 @@
         </div>
     </div>
 </nav>
+
+<style>
+    .language-switcher {
+        display: flex !important; /* Flexbox for inline alignment */
+        gap: 10px !important; /* Spacing between flags */
+        align-items: center !important; /* Vertically center the flags */
+    }
+</style>

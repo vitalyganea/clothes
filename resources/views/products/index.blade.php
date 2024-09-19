@@ -3,7 +3,9 @@
 @section('content')
     <div class="container">
         <h1>All Products</h1>
-
+        <button id="scrollToTopBtn" class="btn" style="font-size:25px; display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background-color: black; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
+            <i class="fa fa-arrow-up" aria-hidden="true"></i>
+        </button>
         <div class="accordion sticky-filter" id="filterAccordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingOne">
@@ -42,13 +44,13 @@
                                     <div class="form-group">
                                         <label for="price-range" class="d-block">Price Range</label>
                                         <div class="price-range-container">
-                                            <input type="number" id="min-price" name="min_price"
+                                            <input type="text" id="min-price" name="min_price"
                                                    class="form-control min-price" placeholder="Min Price"
-                                                   value="{{$minPrice}}">
+                                                   value="{{$minPrice}}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                                             <div class="divider"></div>
-                                            <input type="number" id="max-price" name="max_price"
+                                            <input type="text" id="max-price" name="max_price"
                                                    class="form-control max-price" placeholder="Max Price"
-                                                   value="{{$maxPrice}}">
+                                                   value="{{$maxPrice}}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                                         </div>
                                     </div>
                                 </div>
@@ -85,7 +87,7 @@
 
         <div class="row mt-4" id="product-list">
             @forelse ($products as $product)
-                <div class="col-md-3 col-sm-6 product-item">
+                <div class="col-lg-3 col-md-4 col-sm-6 product-item">
                     <div class="card mb-4 product-card">
                         <!-- If the product has images -->
                         @if ($product->images->count() > 0)
@@ -163,255 +165,14 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script src="{{ asset('js/product/index.js') }}"></script>
+@endpush
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const categorySelect = document.getElementById('category-select');
-        const sizesSelect = document.getElementById('sizes-select');
-        const filterForm = document.getElementById('filter-form');
-        const productList = document.getElementById('product-list');
-        const pagination = document.getElementById('pagination');
-        const noProductsDiv = document.getElementById('no-products'); // Div to show when no products are found
-        const resetButton = document.getElementById('reset-filters');
-        const minPriceInput = document.getElementById('min-price');
-        const maxPriceInput = document.getElementById('max-price');
-        const sortSelect = document.getElementById('sort-select');
-        let loadingMore = false;
-
-        // Extract URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const previouslySelectedSize = urlParams.get('size') || '';
-        const previouslySelectedCategory = urlParams.get('category') || '';
-
-        // Initialize image navigation for image carousels
-        const initializeImageNavigation = () => {
-            document.querySelectorAll('.image-container').forEach(container => {
-                const images = Array.from(container.querySelectorAll('img'));
-                const leftButton = container.querySelector('.nav-button.left');
-                const rightButton = container.querySelector('.nav-button.right');
-
-                if (images.length === 0) {
-                    return; // No images to display
-                }
-
-                let currentIndex = 0;
-
-                // Show the first image by default
-                images[currentIndex].classList.add('active');
-
-                // Function to show image at given index
-                const showImage = (index) => {
-                    images.forEach((img, i) => {
-                        img.classList.toggle('active', i === index);
-                    });
-                    currentIndex = index;
-                };
-
-                // Event listener for left button
-                if (leftButton) {
-                    leftButton.addEventListener('click', () => {
-                        const newIndex = (currentIndex - 1 + images.length) % images.length;
-                        showImage(newIndex);
-                    });
-                }
-
-                // Event listener for right button
-                if (rightButton) {
-                    rightButton.addEventListener('click', () => {
-                        const newIndex = (currentIndex + 1) % images.length;
-                        showImage(newIndex);
-                    });
-                }
-            });
-        };
-
-        // Function to update size options based on selected category
-        const updateSizes = (categoryId) => {
-            if (categoryId === "") {
-                // If "All Categories" is selected, reset sizes to "All Sizes"
-                sizesSelect.innerHTML = '<option value="">All Sizes</option>';
-                sizesSelect.value = ""; // Deselect any selected size
-                sizesSelect.disabled = true; // Disable sizes select
-            } else {
-                // Fetch sizes for the selected category
-                fetch(`/category/${categoryId}/sizes`)
-                    .then(response => response.json())
-                    .then(sizes => {
-                        sizesSelect.innerHTML = '<option value="">All Sizes</option>';
-                        sizesSelect.disabled = false; // Enable sizes select
-
-                        let sizeFound = false;
-
-                        sizes.forEach(size => {
-                            const option = document.createElement('option');
-                            option.value = size.id;
-                            option.textContent = size.size_name;
-
-                            if (size.id == previouslySelectedSize) {
-                                option.selected = true;
-                                sizeFound = true;
-                            }
-
-                            sizesSelect.appendChild(option);
-                        });
-
-                        if (!sizeFound) {
-                            sizesSelect.value = "";
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching sizes:', error);
-                    });
-            }
-        };
-
-        // Function to update URL parameters without reloading the page
-        const updateURL = (categoryId, sizeId, minPrice, maxPrice, sortBy) => {
-            let url = new URL(window.location.href);
-            const params = new URLSearchParams(url.search);
-
-            if (categoryId === "") {
-                params.delete('category');
-            } else {
-                params.set('category', categoryId);
-            }
-
-            if (sizeId === "") {
-                params.delete('size');
-            } else {
-                params.set('size', sizeId);
-            }
-
-            if (minPrice === "" && maxPrice === "") {
-                params.delete('min_price');
-                params.delete('max_price');
-            } else {
-                if (minPrice) params.set('min_price', minPrice);
-                if (maxPrice) params.set('max_price', maxPrice);
-            }
-
-            if (sortBy === "") {
-                params.delete('sort');
-            } else {
-                params.set('sort', sortBy);
-            }
-
-            // Remove URL parameters if no filters are applied
-            if (!params.toString()) {
-                history.replaceState({}, '', window.location.pathname);
-            } else {
-                window.history.replaceState({}, '', `${url.pathname}?${params.toString()}`);
-            }
-        };
-
-        // Function to fetch and display products based on filters
-        const fetchProducts = (formData, append = false) => {
-            loadingMore = true;
-            fetch(`/?${new URLSearchParams(formData).toString()}`)
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newProducts = doc.querySelector('#product-list');
-                    const newPagination = doc.querySelector('#pagination'); // The invisible div for pagination
-
-                    if (newProducts && newProducts.innerHTML.trim()) {
-                        if (append) {
-                            productList.insertAdjacentHTML('beforeend', newProducts.innerHTML);
-                        } else {
-                            productList.innerHTML = newProducts.innerHTML;
-                        }
-
-                        initializeImageNavigation();
-                        pagination.innerHTML = newPagination.innerHTML;
-                        noProductsDiv.style.display = 'none'; // Hide "No products found" message
-                    } else {
-                        productList.innerHTML = ''; // Clear the product list
-                        noProductsDiv.style.display = 'block'; // Show "No products found" message
-                    }
-
-                    loadingMore = false;
-                })
-                .catch(error => {
-                    console.error('Error loading products:', error);
-                    loadingMore = false;
-                });
-        };
-
-        // Initialize size select based on the category and previously selected size
-        if (previouslySelectedCategory) {
-            categorySelect.value = previouslySelectedCategory;
-            updateSizes(previouslySelectedCategory);
-        }
-
-        // Set previously selected size
-        sizesSelect.value = previouslySelectedSize;
-
-        // Event listener for the "Apply" button
-        filterForm.addEventListener('submit', function (e) {
-            e.preventDefault(); // Prevent normal form submission
-            const formData = new FormData(filterForm);
-            fetchProducts(formData);
-            const categoryId = categorySelect.value;
-            const sizeId = sizesSelect.value;
-            const minPrice = minPriceInput.value;
-            const maxPrice = maxPriceInput.value;
-            const sortBy = sortSelect.value;
-            updateURL(categoryId, sizeId, minPrice, maxPrice, sortBy);
-        });
-
-        // Event listener for filter changes
-        categorySelect.addEventListener('change', function () {
-            const categoryId = this.value;
-            updateSizes(categoryId); // Update sizes for the selected category
-            updateURL(categoryId, sizesSelect.value, minPriceInput.value, maxPriceInput.value, sortSelect.value); // Update the URL
-        });
-
-        sizesSelect.addEventListener('change', function () {
-            updateURL(categorySelect.value, this.value, minPriceInput.value, maxPriceInput.value, sortSelect.value);
-        });
-
-        minPriceInput.addEventListener('input', function () {
-            updateURL(categorySelect.value, sizesSelect.value, this.value, maxPriceInput.value, sortSelect.value);
-        });
-
-        maxPriceInput.addEventListener('input', function () {
-            updateURL(categorySelect.value, sizesSelect.value, minPriceInput.value, this.value, sortSelect.value);
-        });
-
-        sortSelect.addEventListener('change', function () {
-            updateURL(categorySelect.value, sizesSelect.value, minPriceInput.value, maxPriceInput.value, this.value);
-        });
-
-        // Reset filters functionality
-        if (resetButton !== null) {
-            resetButton.addEventListener('click', function () {
-                filterForm.reset();
-                updateURL('', '', '', '', '');
-                fetchProducts(new FormData(filterForm)); // Fetch products with reset filters
-            });
-        }
-
-        // Infinite Scroll
-        window.addEventListener('scroll', function () {
-            const scrollPosition = window.scrollY + window.innerHeight;
-            const triggerPosition = document.documentElement.scrollHeight - 100;
-
-            if (scrollPosition >= triggerPosition && !loadingMore) {
-                const formData = new FormData(filterForm);
-                const nextPage = pagination.querySelector('a[rel="next"]');
-
-                if (nextPage) {
-                    formData.set('page', nextPage.getAttribute('href').split('page=')[1]);
-                    fetchProducts(formData, true); // Append new products
-                }
-            }
-        });
-
-        // Initial load
-        // fetchProducts(new FormData(filterForm));
-
-        // Initialize image navigation for initially loaded products
-        initializeImageNavigation();
-    });
-</script>
+<style>
+    #scrollToTopBtn {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.5s ease; /* Add this line if not set via JS */
+    }
+</style>

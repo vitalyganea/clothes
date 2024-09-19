@@ -8,8 +8,8 @@
     top: calc(100% - 5px); /* Slight overlap with input field */
     left: 0;
     right: 0;
-    z-index: 1000;
     border: 1px solid #ddd;
+    z-index: 1001 !important;
 }
 
 .language-switcher {
@@ -42,6 +42,10 @@
     align-items: center;
     justify-content: center;
     position: relative; /* Position relative for positioning effects */
+}
+
+.image-container:hover .image-navigation {
+    opacity: 1; /* Show navigation on hover */
 }
 
 .card-img {
@@ -90,14 +94,32 @@
     background: rgba(0, 0, 0, 0.8);
 }
 
-.image-container:hover .image-navigation {
-    opacity: 1; /* Show navigation on hover */
+
+
+/* Large devices (desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .image-container {
+        height: 250px; /* Height for large devices */
+    }
 }
 
-/* Media query for mobile devices */
-@media (max-width: 767px) {
+/* Medium devices (tablets, 768px to 1199px) */
+@media (min-width: 768px) and (max-width: 1199px) {
     .image-container {
-        height: 400px; /* Increase height for mobile devices */
+        height: 215px; /* Height for medium devices */
+    }
+}
+
+/* Small devices (phones, up to 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+    .image-container {
+        height: 250px; /* Height for small devices */
+    }
+}
+
+@media (max-width: 575px) {
+    .image-container {
+        height: 480px; /* Height for extra small devices */
     }
 }
 
@@ -199,5 +221,34 @@
     top: 0;
     z-index: 1000; /* Ensure it stays above other content */
     background-color: white; /* Optional: to avoid any transparency issues */
-    border-bottom: 1px solid #ddd; /* Optional: to add a border for better visual separation */
 }
+
+.scroll-to-top-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s ease; /* Smooth transition */
+    pointer-events: none; /* Prevent interaction when hidden */
+}
+
+.scroll-to-top-btn.show {
+    display: flex;
+    opacity: 1; /* Fully visible */
+    pointer-events: auto; /* Enable interaction */
+}
+
+/*.accordion-button:focus {*/
+/*    box-shadow: none !important;*/
+/*}*/
