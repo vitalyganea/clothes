@@ -162,61 +162,13 @@
     document.addEventListener('DOMContentLoaded', function () {
         const categorySelect = document.getElementById('category-select');
         const sizesSelect = document.getElementById('sizes-select');
+        const filterForm = document.getElementById('filter-form');
+        const productList = document.getElementById('product-list');
+        const pagination = document.getElementById('pagination');
         const previouslySelectedSize = "{{ request('size') }}"; // Fetch previously selected size from the server
+        let loadingMore = false;
 
-        const updateSizes = (categoryId) => {
-            fetch(`/category/${categoryId}/sizes`)
-                .then(response => response.json())
-                .then(sizes => {
-                    sizesSelect.innerHTML = '<option value="">All Sizes</option>';
-
-                    let sizeFound = false;
-
-                    sizes.forEach(size => {
-                        const option = document.createElement('option');
-                        option.value = size.id;
-                        option.textContent = size.size_name;
-
-                        // Set the previously selected size as selected if it exists in the new category
-                        if (size.id == previouslySelectedSize) {
-                            option.selected = true;
-                            sizeFound = true;
-                        }
-
-                        sizesSelect.appendChild(option);
-                    });
-
-                    // If the previously selected size is not found, ensure "All Sizes" is selected
-                    if (!sizeFound) {
-                        sizesSelect.value = "";
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching sizes:', error);
-                });
-        };
-
-        const updateURL = (categoryId, sizeId) => {
-            let url = new URL(window.location.href);
-            const params = new URLSearchParams(url.search);
-
-            // Remove parameters if "All categories" or "All sizes" is selected
-            if (categoryId === "") {
-                params.delete('category');
-            } else {
-                params.set('category', categoryId);
-            }
-
-            if (sizeId === "") {
-                params.delete('size');
-            } else {
-                params.set('size', sizeId);
-            }
-
-            // Update URL without reloading the page
-            window.history.replaceState({}, '', `${url.pathname}?${params.toString()}`);
-        };
-
+        // Initialize image navigation for image carousels
         const initializeImageNavigation = () => {
             document.querySelectorAll('.image-container').forEach(container => {
                 const images = Array.from(container.querySelectorAll('img'));
@@ -224,8 +176,7 @@
                 const rightButton = container.querySelector('.nav-button.right');
 
                 if (images.length === 0) {
-                    // No images to display
-                    return;
+                    return; // No images to display
                 }
 
                 let currentIndex = 0;
@@ -259,6 +210,104 @@
             });
         };
 
+        // Function to update size options based on selected category
+        const updateSizes = (categoryId) => {
+            fetch(`/category/${categoryId}/sizes`)
+                .then(response => response.json())
+                .then(sizes => {
+                    sizesSelect.innerHTML = '<option value="">All Sizes</option>';
+
+                    let sizeFound = false;
+
+                    sizes.forEach(size => {
+                        const option = document.createElement('option');
+                        option.value = size.id;
+                        option.textContent = size.size_name;
+
+                        if (size.id == previouslySelectedSize) {
+                            option.selected = true;
+                            sizeFound = true;
+                        }
+
+                        sizesSelect.appendChild(option);
+                    });
+
+                    if (!sizeFound) {
+                        sizesSelect.value = "";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching sizes:', error);
+                });
+        };
+
+        // Function to update URL parameters without reloading the page
+        const updateURL = (categoryId, sizeId) => {
+            let url = new URL(window.location.href);
+            const params = new URLSearchParams(url.search);
+
+            if (categoryId === "") {
+                params.delete('category');
+            } else {
+                params.set('category', categoryId);
+            }
+
+            if (sizeId === "") {
+                params.delete('size');
+            } else {
+                params.set('size', sizeId);
+            }
+
+            window.history.replaceState({}, '', `${url.pathname}?${params.toString()}`);
+        };
+
+        // Function to fetch and display products based on filters
+        const fetchProducts = (formData, append = false) => {
+            loadingMore = true;
+            fetch(`/?${new URLSearchParams(formData).toString()}`)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newProducts = doc.querySelector('#product-list');
+                    const newPagination = doc.querySelector('#pagination'); // The invisible div for pagination
+
+                    if (!newProducts || !newProducts.innerHTML.trim()) {
+                        return; // No more products to load
+                    }
+
+                    // Append or replace product list based on the call
+                    if (append) {
+                        productList.insertAdjacentHTML('beforeend', newProducts.innerHTML);
+                    } else {
+                        productList.innerHTML = newProducts.innerHTML;
+                    }
+
+                    // Initialize image navigation for newly loaded products
+                    initializeImageNavigation();
+
+                    // Update pagination
+                    pagination.innerHTML = newPagination.innerHTML;
+
+                    loadingMore = false;
+                })
+                .catch(error => {
+                    console.error('Error loading products:', error);
+                    loadingMore = false;
+                });
+        };
+
+        // Event listener for the "Apply" button
+        filterForm.addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent normal form submission
+
+            const formData = new FormData(filterForm);
+
+            // Fetch products with current filters
+            fetchProducts(formData);
+        });
+
+        // Event listener for filter changes
         categorySelect.addEventListener('change', function () {
             const categoryId = this.value;
             updateSizes(categoryId);
@@ -270,84 +319,36 @@
             updateURL(categorySelect.value, sizeId);
         });
 
-        // Initialize size dropdown based on the current category
-        const initialCategoryId = categorySelect.value;
-        if (initialCategoryId) {
-            updateSizes(initialCategoryId);
-        }
-
         // Reset filters functionality
         const resetButton = document.getElementById('reset-filters');
         if (resetButton !== null) {
             resetButton.addEventListener('click', function () {
-                const form = document.getElementById('filter-form');
-                form.reset();
-                // Clear URL parameters
-                window.history.replaceState({}, '', window.location.pathname);
-                location.reload();
+                filterForm.reset();
+                updateURL('', '');
+                fetchProducts(new FormData(filterForm)); // Fetch products with reset filters
             });
         }
 
-        // Load more products on scroll
-        let loading = false;
-        let page = 1;
-        let hasMoreProducts = true; // Flag to check if there are more products to load
+        // Infinite Scroll
+        window.addEventListener('scroll', function () {
+            const scrollPosition = window.scrollY + window.innerHeight;
+            const triggerPosition = document.documentElement.scrollHeight - 100;
 
-        const loadMoreProducts = () => {
-            if (loading || !hasMoreProducts) return;
+            if (scrollPosition >= triggerPosition && !loadingMore) {
+                const formData = new FormData(filterForm);
+                const nextPage = pagination.querySelector('a[rel="next"]');
 
-            loading = true;
-            page++;
-
-            // Get the current filter values from the form
-            const form = document.getElementById('filter-form');
-            const formData = new FormData(form);
-            const params = new URLSearchParams(formData);
-
-            fetch(`/?${params.toString()}`)
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newProducts = doc.querySelector('#product-list');
-                    const newPagination = doc.querySelector('#pagination'); // The invisible div for pagination
-
-                    if (!newProducts || !newProducts.innerHTML.trim()) {
-                        hasMoreProducts = false; // No more products to load
-                        window.removeEventListener('scroll', onScroll);
-                        return;
-                    }
-
-                    document.querySelector('#product-list').insertAdjacentHTML('beforeend', newProducts.innerHTML);
-
-                    // Initialize image navigation for newly added products
-                    initializeImageNavigation();
-
-                    if (newPagination && newPagination.innerHTML.trim()) {
-                        document.querySelector('#pagination').innerHTML = newPagination.innerHTML;
-                    } else {
-                        hasMoreProducts = false;
-                        window.removeEventListener('scroll', onScroll);
-                    }
-
-                    loading = false;
-                })
-                .catch(error => {
-                    console.error('Error loading more products:', error);
-                    loading = false;
-                });
-        };
-
-        const onScroll = () => {
-            if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-                loadMoreProducts();
+                if (nextPage) {
+                    formData.set('page', nextPage.getAttribute('href').split('page=')[1]);
+                    fetchProducts(formData, true); // Append new products
+                }
             }
-        };
+        });
 
-        window.addEventListener('scroll', onScroll);
+        // Initial load
+        fetchProducts(new FormData(filterForm));
 
         // Initialize image navigation for initially loaded products
         initializeImageNavigation();
     });
-
 </script>

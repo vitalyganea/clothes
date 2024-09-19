@@ -50,8 +50,10 @@
         </div>
     @endforeach
 </div>
+<div id="no-products-message" style="display: none;">
 
 <!-- Invisible div for pagination -->
 <div id="pagination" style="display: none;">
+</div>
     {{ $products->links('pagination::bootstrap-4') }}
 </div>

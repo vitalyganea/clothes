@@ -35,7 +35,6 @@ class ProductController extends Controller
             $products->where('price', '<=', (int)$request->max_price);
         }
 
-
         switch ($request->sort) {
             case 'price_asc':
                 $products->orderBy('price', 'asc');
@@ -50,7 +49,7 @@ class ProductController extends Controller
                 $products->orderBy('created_at', 'desc');
                 break;
             default:
-                $products->orderBy('created_at', 'desc'); // Default sorting if no sort option is selected
+                $products->orderBy('created_at', 'desc');
                 break;
         }
 
@@ -60,7 +59,13 @@ class ProductController extends Controller
         $minPrice = Product::min('price');
         $maxPrice = Product::max('price');
 
-        // Pass the previously selected category and size to the view
+        if ($request->ajax()) {
+            return response()->json([
+                'products' => view('products.partials.product-list', ['products' => $products])->render(),
+                'pagination' => view('pagination::bootstrap-4', ['paginator' => $products])->render(),
+            ]);
+        }
+
         return view('products.index', [
             'products' => $products,
             'productCategories' => ProductCategory::all(),
