@@ -116,10 +116,10 @@
                                 <img src="https://via.placeholder.com/150" class="card-img" alt="No image available">
                             </div>
                         @endif
-                        <div class="dress-card-body">
-                            <h4 class="dress-card-title">{{$product->name}}</h4>
-                            <p class="dress-card-para">{{$product->productCategory['name']}}</p>
-                            <p class="dress-card-para"><span class="dress-card-price">{{$product->price}} MDL</span>
+                        <div class="product-card-body">
+                            <h4 class="product-card-title">{{$product->name}}</h4>
+                            <p class="product-card-custom">{{$product->productCategory['name']}}</p>
+                            <p class="product-card-custom"><span class="product-card-price">{{$product->price}} MDL</span>
 
 
                             <div class="row">

@@ -675,24 +675,24 @@ body.dark .search-field i{
     transition: opacity 0.3s ease, visibility 0.5s ease; /* Add this line if not set via JS */
 }
 
-.dress-card-body {
+.product-card-body {
     padding:1rem;
     background: #fff;
     border-radius: 0 0 7px 7px;
 }
 
-.dress-card-title {
+.product-card-title {
     line-height: 0.5rem;
 }
 
 
-.dress-card-price {
+.product-card-price {
     font-size: 1rem;
     font-weight: bold;
 }
 
 
-.dress-card-para {
+.product-card-custom {
     margin-bottom: 0.2rem;
     font-size: 1.0rem;
     margin-bottom: 0rem;
@@ -722,13 +722,30 @@ body.dark .search-field i{
     border-radius: 3px;
 }
 
+/* Initial styles for bag-button */
 .bag-button {
     background: black;
     color: white;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Add smooth transition */
 }
 
+/* Reverse color on hover for bag-button */
+.bag-button:hover {
+    background: white;
+    color: black;
+    border: 1px solid black;
+}
 
+/* Initial styles for wish-button */
 .wish-button {
     border: 1px solid black;
     color: black;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Add smooth transition */
+}
+
+/* Reverse color on hover for wish-button */
+.wish-button:hover {
+    background: black;
+    color: white;
+    border-color: black; /* Optional to make the border the same color */
 }
