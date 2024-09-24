@@ -2,12 +2,12 @@
 
 @section('content')
     <div class="container">
-        <h1>All Products</h1>
+        <h1 class="title">All Products</h1>
         <button id="scrollToTopBtn" class="btn" style="font-size:25px; display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background-color: black; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
             <i class="fa fa-arrow-up" aria-hidden="true"></i>
         </button>
-        <div class="accordion sticky-filter" id="filterAccordion">
-            <div class="accordion-item">
+        <div class="accordion sticky-filter custom-filter" id="filterAccordion">
+            <div class="accordion-item custom-accordion-item">
                 <h2 class="accordion-header" id="headingOne">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                             data-bs-target="#collapseOne" aria-expanded="{{ $filterIsEmpty ? 'false' : 'true' }}"
@@ -34,7 +34,7 @@
 
                                 <div class="col-md-2 col-sm-6">
                                     <label for="size">Size</label>
-                                    <select id="sizes-select" name="size" class="form-control">
+                                    <select id="sizes-select" disabled  name="size" class="form-control">
                                         <option value="">All Sizes</option>
                                         <!-- This will be populated dynamically by JavaScript -->
                                     </select>
@@ -85,13 +85,19 @@
             </div>
         </div>
 
+
+
         <div class="row mt-4" id="product-list">
             @forelse ($products as $product)
+
+
+
+
                 <div class="col-lg-3 col-md-4 col-sm-6 product-item">
                     <div class="card mb-4 product-card">
                         <!-- If the product has images -->
                         @if ($product->images->count() > 0)
-                            <div class="image-container">
+                            <div class="image-container" >
                                 @foreach ($product->images as $index => $image)
                                     <img src="{{ asset($image->path) }}" class="card-img" alt="{{ $product->name }}"
                                          data-index="{{ $index }}">
@@ -110,37 +116,15 @@
                                 <img src="https://via.placeholder.com/150" class="card-img" alt="No image available">
                             </div>
                         @endif
-                        <div class="card-body title-container">
-                            <h5 class="card-title fw-bold">{{ $product->name }}</h5>
-                        </div>
-                        <div class="container">
-                            <div class="row text-center mb-4 d-flex justify-content-between align-items-center"> <!-- Flexbox container -->
-                                <div class="col-md-4 text-left"> <!-- Left aligned category -->
-                                    {{$product->productCategory['name']}}
-                                </div>
-                                <div class="col-md-4 text-center"> <!-- Center aligned size -->
-                                    {{$product->productSize['size_name']}}
-                                </div>
-                                <div class="col-md-4 text-right circle-counter-container">
-                                    <!-- Right aligned views inside a circle -->
-                                    <div class="circle-counter">
-                                        <i class="fa fa-eye" aria-hidden="true"></i>
-                                        {{count($product->uniqueViews)}}
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="dress-card-body">
+                            <h4 class="dress-card-title">{{$product->name}}</h4>
+                            <p class="dress-card-para">{{$product->productCategory['name']}}</p>
+                            <p class="dress-card-para"><span class="dress-card-price">{{$product->price}} MDL</span>
 
-                            <div class="row text-center mb-4 d-flex align-items-center"> <!-- Flex container -->
-                                <div class="col-md-12 d-flex justify-content-between align-items-center">
-                                    <!-- Price and details in one flex container -->
-                                    <span class="custom-label"> <!-- Using custom label class -->
-                {{$product->price}} MDL
-            </span>
-                                    <a href="{{ route('products.show', $product->id) }}" class="hover-reverse">
-                                        <!-- Hover-reverse button -->
-                                        Details
-                                    </a>
-                                </div>
+
+                            <div class="row">
+                                <div class="col-md-6 card-button"><a href=""><div class="card-button-inner bag-button">Add to Bag</div></a></div>
+                                <div class="col-md-6 card-button"><a href="{{ route('products.show', $product->id) }}"><div class="card-button-inner wish-button">DETAILS</div></a></div>
                             </div>
                         </div>
                     </div>
@@ -168,11 +152,3 @@
 @push('scripts')
     <script src="{{ asset('js/product/index.js') }}"></script>
 @endpush
-
-<style>
-    #scrollToTopBtn {
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.5s ease; /* Add this line if not set via JS */
-    }
-</style>

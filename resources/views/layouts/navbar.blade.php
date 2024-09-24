@@ -1,88 +1,89 @@
-<nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-    <div class="container">
-        <a class="navbar-brand" href="{{ url('/') }}">
-            {{ config('app.name', 'Clothes') }}
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+<link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet">
+<nav>
+    <div class="nav-bar">
+        <i class='bx bx-menu sidebarOpen' ></i>
+        <span class="logo navLogo"><a href="{{ url('/') }}">Clothes</a></span>
 
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <!-- Left Side Of Navbar -->
-            <ul class="navbar-nav me-auto align-items-center">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/') }}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link @if(Route::is('shops.index')) active @endif" href="{{ route('shops.index')}}">Shops</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/shop') }}">Contact</a>
-                </li>
-                <li class="nav-item d-flex align-items-center" style="margin-top: 5px;">
-                    <form class="d-flex position-relative" id="searchForm" action="{{ route('search') }}" method="GET">
-                        <input class="form-control me-2" type="search" name="query" id="searchQuery" placeholder="Search Products or Shops" aria-label="Search">
-                        <div id="searchResults" class="d-none position-absolute bg-white border rounded shadow-sm w-100" style="top: 100%; left: 0; z-index: 1000;"></div>
-                    </form>
-                </li>
-            </ul>
+        <div class="menu">
+            <div class="logo-toggle">
+                <span class="logo"><a href="{{ url('/') }}">Clothes</a></span>
+                <i class='bx bx-x siderbarClose'></i>
+            </div>
 
-            <!-- Right Side Of Navbar -->
-            <ul class="navbar-nav ms-auto align-items-center">
-                @guest
-                    @if (Route::has('login'))
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                        </li>
-                    @endif
-                    @if (Route::has('register'))
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                        </li>
-                    @endif
-                @else
-                    <li class="nav-item dropdown">
-                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            {{ Auth::user()->name }}
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                               onclick="event.preventDefault();
-                                         document.getElementById('logout-form').submit();">
-                                {{ __('Logout') }}
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
-                            <a class="dropdown-item" href="{{ route('shop.my-shops') }}">
-                                My Shops
-                            </a>
-                            <div class="dropdown-item">
-                                <div class="language-switcher">
-                                    <!-- Inline flag links -->
-                                    <a href="{{ route('language.switch', ['lang' => 'ro']) }}">
-                                        <img class="lang-flag" src="{{ asset('assets/flags/ro.svg') }}" alt="Romanian">
-                                    </a>
-                                    <a href="{{ route('language.switch', ['lang' => 'ru']) }}">
-                                        <img class="lang-flag" src="{{ asset('assets/flags/ru.svg') }}" alt="Russian">
-                                    </a>
-                                    <a href="{{ route('language.switch', ['lang' => 'en']) }}">
-                                        <img class="lang-flag" src="{{ asset('assets/flags/en.svg') }}" alt="English">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                @endguest
+            <ul class="nav-links">
+                <li><a href="{{ url('/') }}">Home</a></li>
+                <li><a class="@if(Route::is('shops.index')) active @endif" href="{{ route('shops.index')}}">Shops</a></li>
             </ul>
+        </div>
+
+        <div class="darkLight-searchBox">
+            <div class="dark-light">
+                <i class='bx bx-moon moon'></i>
+                <i class='bx bx-sun sun'></i>
+            </div>
+
+            <div class="searchBox">
+                <div class="searchToggle">
+                    <i class='bx bx-x cancel'></i>
+                    <i class='bx bx-search search'></i>
+                </div>
+
+                <div class="search-field">
+                    <input type="text" id="searchQuery" placeholder="Search...">
+                    <i class='bx bx-search'></i>
+                    <div id="searchResults" class="d-none position-absolute bg-white border rounded shadow-sm w-100" style="top: 100%; left: 0; z-index: 1000;"></div>
+                </div>
+            </div>
+            <div class="dark-light">
+                <i class='bx bx-user user'></i>
+            </div>
         </div>
     </div>
 </nav>
+<script>
+    const body = document.querySelector("body"),
+        nav = document.querySelector("nav"),
+        modeToggle = document.querySelector(".dark-light"),
+        searchToggle = document.querySelector(".searchToggle"),
+        sidebarOpen = document.querySelector(".sidebarOpen"),
+        siderbarClose = document.querySelector(".siderbarClose");
 
-<style>
-    .language-switcher {
-        display: flex !important; /* Flexbox for inline alignment */
-        gap: 10px !important; /* Spacing between flags */
-        align-items: center !important; /* Vertically center the flags */
+    let getMode = localStorage.getItem("mode");
+    if(getMode && getMode === "dark-mode"){
+        body.classList.add("dark");
     }
-</style>
+
+    // js code to toggle dark and light mode
+    modeToggle.addEventListener("click" , () =>{
+        modeToggle.classList.toggle("active");
+        body.classList.toggle("dark");
+
+        // js code to keep user selected mode even page refresh or file reopen
+        if(!body.classList.contains("dark")){
+            localStorage.setItem("mode" , "light-mode");
+        }else{
+            localStorage.setItem("mode" , "dark-mode");
+        }
+    });
+
+    // js code to toggle search box
+    searchToggle.addEventListener("click" , () =>{
+        searchToggle.classList.toggle("active");
+    });
+
+
+    //   js code to toggle sidebar
+    sidebarOpen.addEventListener("click" , () =>{
+        nav.classList.add("active");
+    });
+
+    body.addEventListener("click" , e =>{
+        let clickedElm = e.target;
+
+        if(!clickedElm.classList.contains("sidebarOpen") && !clickedElm.classList.contains("menu")){
+            nav.classList.remove("active");
+        }
+    });
+
+
+</script>

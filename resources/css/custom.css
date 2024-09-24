@@ -135,7 +135,9 @@
 }
 
 .title-container {
-    height: 50px;
+    height: 60px;
+    background-color: #242526;
+    color: #CCCCCC;
 }
 
 .price-range-container {
@@ -173,30 +175,13 @@
     box-shadow: inset 0 calc(-1 * var(--bs-accordion-border-width)) 0 var(--bs-accordion-border-color);
 }
 
-.custom-label {
-    background-color: transparent;
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    border: 1px solid #212529; /* Border for label */
-}
 
-.hover-reverse {
-    background-color: transparent;
-    color: #212529; /* Primary color for text */
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    border: 1px solid #212529; /* Primary border */
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
 
-.hover-reverse:hover {
-    background-color: #212529; /* Background color on hover */
-    color: #fff; /* Text color on hover */
-}
+
 
 .circle-counter {
     background-color: #f0f0f0; /* Light gray background for the circle */
-    color: #000; /* Text color */
+    color: #5C696F; /* Text color */
     border-radius: 50%; /* Makes it circular */
     width: 50px; /* Fixed width */
     height: 50px; /* Fixed height */
@@ -219,8 +204,7 @@
 .sticky-filter {
     position: sticky;
     top: 0;
-    z-index: 1000; /* Ensure it stays above other content */
-    background-color: white; /* Optional: to avoid any transparency issues */
+    z-index: 100; /* Ensure it stays above other content */
 }
 
 .scroll-to-top-btn {
@@ -249,6 +233,502 @@
     pointer-events: auto; /* Enable interaction */
 }
 
-/*.accordion-button:focus {*/
-/*    box-shadow: none !important;*/
-/*}*/
+@font-face {
+    font-family: 'Alternate Gothic No. 1';
+    src: url('/fonts/AlternateGotNo1D.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Alternate Gothic No. 2';
+    src: url('/fonts/AlternateGotNo2D.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Alternate Gothic No. 3';
+    src: url('/fonts/AlternateGotNo3D.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-size: 20px;
+}
+
+
+@font-face {
+    font-family: 'Merriweather';
+    src: url('/fonts/Merriweather-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Merriweather';
+    src: url('/fonts/Merriweather-Italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Merriweather';
+    src: url('/fonts/Merriweather-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Merriweather';
+    src: url('/fonts/Merriweather-BoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Merriweather';
+    src: url('/fonts/Merriweather-Light.ttf') format('truetype');
+    font-weight: 300; /* Light weight */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Merriweather';
+    src: url('/fonts/Merriweather-LightItalic.ttf') format('truetype');
+    font-weight: 300; /* Light weight */
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Merriweather';
+    src: url('/fonts/Merriweather-Black.ttf') format('truetype');
+    font-weight: 900; /* Black weight */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Merriweather';
+    src: url('/fonts/Merriweather-BlackItalic.ttf') format('truetype');
+    font-weight: 900; /* Black weight */
+    font-style: italic;
+}
+
+
+.accordion-button{
+    box-shadow: none !important;
+    color: black !important;
+}
+
+.accordion-button:focus {
+    outline: none !important; /* Remove the default outline */
+    box-shadow: none !important; /* Remove any box shadow */
+}
+
+.custom-filter{
+    font-family: 'Merriweather', serif !important;
+}
+
+.custom-accordion-item{
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.title{
+    font-family: 'Merriweather', serif !important;
+}
+
+.icon {
+    transition: opacity 0.3s ease;
+    position: absolute;
+    background: #242526;
+    padding: 0px 14px;
+    display: flex;
+    align-items: center;
+    font-size: 22px;
+    /*opacity: 0.5;*/
+    color:#9F9F9F;
+    z-index: 3;
+}
+
+.price-icon{
+    bottom: 45px;
+    right: 0px;
+    border-top-left-radius: 20px 20px;
+}
+
+
+.counter-icon{
+    border-bottom-right-radius: 20px 20px;
+}
+
+
+.product-item:hover .icon {
+    opacity: 0; /* Make the icon disappear on hover */
+}
+
+.product-item{
+    font-family: 'Alternate Gothic No. 3', sans-serif;
+}
+
+.custom-title{
+    font-size: 20px;
+    color: #CCCCCC !important;
+}
+
+.custom-price{
+    background-color: transparent;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    color:#CCCCCC;
+    font-size: 24px;
+}
+
+/* ===== Google Font Import - Poppins ===== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.4s ease;;
+}
+
+
+/* ===== Colours ===== */
+:root{
+    --body-color: #E4E9F7;
+    --nav-color: #4070F4;
+    --side-nav: #010718;
+    --text-color: #FFF;
+    --search-bar: #F2F2F2;
+    --search-text: #010718;
+}
+
+
+body.dark{
+    --body-color: #18191A;
+    --nav-color: #242526;
+    --side-nav: #242526;
+    --text-color: #CCC;
+    --search-bar: #242526;
+}
+
+nav{
+    top: 0;
+    left: 0;
+    height: 70px;
+    width: 100%;
+    background-color: var(--nav-color);
+    z-index: 100;
+}
+
+body.dark nav{
+    border: 1px solid #393838;
+}
+
+nav .nav-bar{
+    position: relative;
+    height: 100%;
+    max-width: 1000px;
+    width: 100%;
+    background-color: var(--nav-color);
+    margin: 0 auto;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+nav .nav-bar .sidebarOpen{
+    color: var(--text-color);
+    font-size: 25px;
+    padding: 5px;
+    cursor: pointer;
+    display: none;
+}
+
+nav .nav-bar .logo a{
+    font-size: 25px;
+    font-weight: 500;
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.menu .logo-toggle{
+    display: none;
+}
+
+.nav-bar .nav-links{
+    display: flex;
+    align-items: center;
+}
+.nav-links{
+    margin-bottom: 0px !important;
+}
+.nav-bar .nav-links li{
+    margin: 0 5px;
+    list-style: none;
+}
+
+.nav-links li a{
+    position: relative;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 10px;
+}
+
+.nav-links li a::before{
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    height: 6px;
+    width: 6px;
+    border-radius: 50%;
+    background-color: var(--text-color);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.nav-links li:hover a::before{
+    opacity: 1;
+}
+
+.nav-bar .darkLight-searchBox{
+    display: flex;
+    align-items: center;
+}
+
+.darkLight-searchBox .dark-light,
+.darkLight-searchBox .searchToggle{
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 5px;
+}
+
+.dark-light i,
+.searchToggle i{
+    position: absolute;
+    color: var(--text-color);
+    font-size: 22px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dark-light i.sun{
+    opacity: 0;
+    pointer-events: none;
+}
+
+.dark-light.active i.sun{
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dark-light.active i.moon{
+    opacity: 0;
+    pointer-events: none;
+}
+
+.searchToggle i.cancel{
+    opacity: 0;
+    pointer-events: none;
+}
+
+.searchToggle.active i.cancel{
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.searchToggle.active i.search{
+    opacity: 0;
+    pointer-events: none;
+}
+
+.searchBox{
+    position: relative;
+}
+
+.searchBox .search-field{
+    position: absolute;
+    bottom: -85px;
+    right: 5px;
+    height: 50px;
+    width: 300px;
+    display: flex;
+    align-items: center;
+    background-color: var(--nav-color);
+    padding: 3px;
+    border-radius: 6px;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.searchToggle.active ~ .search-field{
+    bottom: -74px;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.search-field::before{
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: -4px;
+    height: 12px;
+    width: 12px;
+    background-color: var(--nav-color);
+    transform: rotate(-45deg);
+    z-index: -1;
+}
+
+.search-field input{
+    height: 100%;
+    width: 100%;
+    padding: 0 45px 0 15px;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--search-text);
+    background-color: var(--search-bar);
+}
+
+body.dark .search-field input{
+    color: var(--text-color);
+}
+
+.search-field i{
+    position: absolute;
+    color: var(--nav-color);
+    right: 15px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+body.dark .search-field i{
+    color: var(--text-color);
+}
+
+@media (max-width: 790px) {
+    nav .nav-bar .sidebarOpen{
+        display: block;
+    }
+
+    .menu{
+        position: fixed;
+        height: 100%;
+        width: 320px;
+        left: -100%;
+        top: 0;
+        padding: 20px;
+        background-color: var(--side-nav);
+        z-index: 101;
+        transition: all 0.4s ease;
+    }
+
+    nav.active .menu{
+        left: -0%;
+    }
+
+    nav.active .nav-bar .navLogo a{
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .menu .logo-toggle{
+        display: block;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .logo-toggle .siderbarClose{
+        color: var(--text-color);
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .nav-bar .nav-links{
+        flex-direction: column;
+        padding-top: 30px;
+    }
+
+    .nav-links li a{
+        display: block;
+        margin-top: 20px;
+    }
+}
+
+#scrollToTopBtn {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.5s ease; /* Add this line if not set via JS */
+}
+
+.dress-card-body {
+    padding:1rem;
+    background: #fff;
+    border-radius: 0 0 7px 7px;
+}
+
+.dress-card-title {
+    line-height: 0.5rem;
+}
+
+
+.dress-card-price {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+
+.dress-card-para {
+    margin-bottom: 0.2rem;
+    font-size: 1.0rem;
+    margin-bottom: 0rem;
+}
+
+.surprise-bubble:hover a {
+    opacity: 1;
+    -webkit-transition-delay: 2s;
+    /* Safari */
+    transition-delay: 2s;
+    -webkit-transition: opacity 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+    transition: opacity 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.card-button {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 15px;
+    padding: 9px;
+}
+.card-button a {
+    text-decoration: none;
+}
+
+.card-button-inner {
+    padding: 10px;
+    border-radius: 3px;
+}
+
+.bag-button {
+    background: black;
+    color: white;
+}
+
+
+.wish-button {
+    border: 1px solid black;
+    color: black;
+}
