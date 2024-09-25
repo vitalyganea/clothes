@@ -116,7 +116,7 @@
                                 - {{$product->productSize->size_name}}</p>
                             <p class="product-card-custom"><span class="product-card-price">{{$product->price}} MDL</span>
                             <div class="row">
-                                <div class="col-md-6 card-button"><a href=""><div class="card-button-inner bag-button">Add to Bag</div></a></div>
+                                <div class="col-md-6 card-button cursor-pointer"><a onclick="addToWishlist({{ $product->id }})"><div class="card-button-inner bag-button">FAVORITE</div></a></div>
                                 <div class="col-md-6 card-button"><a href="{{ route('products.show', $product->id) }}"><div class="card-button-inner wish-button">DETAILS</div></a></div>
                             </div>
                         </div>
@@ -145,3 +145,38 @@
 @push('scripts')
     <script src="{{ asset('js/product/index.js') }}"></script>
 @endpush
+
+    <script>
+        function addToWishlist(productId) {
+        // Send AJAX request to add the product to the wishlist
+        fetch(`/wishlist/add/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token for security
+            },
+            body: JSON.stringify({ product_id: productId }) // Send the product ID
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok');
+            })
+            .then(data => {
+                // Handle success response
+                Swal.fire({
+                    title: 'Product added to wishlist!',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500, // Auto-close after 1.5 seconds
+                    toast: true, // Display as a toast
+                    position: 'top-end' // Positioning of the toast
+                });
+            })
+            .catch(error => {
+                // Handle error response
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>

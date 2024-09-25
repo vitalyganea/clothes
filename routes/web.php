@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,6 +26,9 @@ Route::get('my-shops', [ShopController::class,'myShops'])->name('shop.my-shops')
 Route::get('shops/{shop}/products/create', [ProductController::class, 'create'])->name('products.create');
 Route::post('shops/{shop}/products', [ProductController::class, 'store'])->name('products.store');
 Route::get('/category/{categoryId}/sizes', [ProductController::class, 'getSizesByCategory'])->name('category.sizes');
+Route::post('/wishlist/add/{id}', [WishlistController::class, 'add'])->name('wishlist.add');
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
 
 
 Route::get('/shops/{id}/edit', [ShopController::class, 'edit'])->name('shops.edit');

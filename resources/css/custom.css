@@ -679,11 +679,6 @@ body.dark .search-field i{
     border-radius: 0 0 7px 7px;
 }
 
-.product-card-title {
-    line-height: 0.5rem;
-}
-
-
 .product-card-price {
     font-size: 1rem;
     font-weight: bold;
@@ -722,6 +717,7 @@ body.dark .search-field i{
 
 /* Initial styles for bag-button */
 .bag-button {
+    cursor: pointer !important;
     background: black;
     color: white;
     border: 1px solid black;

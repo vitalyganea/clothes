@@ -36,4 +36,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductView::class);
     }
+
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
 }
