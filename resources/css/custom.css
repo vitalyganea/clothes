@@ -64,10 +64,6 @@
     transform: scale(1.1); /* Zoom out effect */
 }
 
-.card-body {
-    text-align: center;
-}
-
 .image-navigation {
     position: absolute;
     top: 50%;
@@ -401,6 +397,7 @@
     --text-color: #FFF;
     --search-bar: #F2F2F2;
     --search-text: #010718;
+    --background-elements-color: #4070F4;
 }
 
 
@@ -410,6 +407,7 @@ body.dark{
     --side-nav: #242526;
     --text-color: #CCC;
     --search-bar: #242526;
+    --background-elements-color: #18191A;
 }
 
 nav{
@@ -726,6 +724,7 @@ body.dark .search-field i{
 .bag-button {
     background: black;
     color: white;
+    border: 1px solid black;
     transition: background-color 0.3s ease, color 0.3s ease; /* Add smooth transition */
 }
 
@@ -733,7 +732,6 @@ body.dark .search-field i{
 .bag-button:hover {
     background: white;
     color: black;
-    border: 1px solid black;
 }
 
 /* Initial styles for wish-button */
@@ -749,3 +747,77 @@ body.dark .search-field i{
     color: white;
     border-color: black; /* Optional to make the border the same color */
 }
+
+.apply-button{
+    background-color: black !important;
+    color: white;
+    border: 1px solid black !important;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Add smooth transition */
+}
+
+.apply-button:hover {
+    background: white !important;
+    color: black !important;
+    border-color: black; /* Optional to make the border the same color */
+}
+
+.reset-button{
+    background-color: white !important;
+    color: black !important;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Add smooth transition */
+}
+
+.reset-button:hover {
+    background: black !important;
+    color: white !important;
+    border-color: black; /* Optional to make the border the same color */
+}
+
+.searchBox .profile-div {
+    margin-top: 20px;
+    width: 227px;
+    align-items: center;
+    background-color: var(--nav-color) !important;
+    color: var(--text-color) !important;
+    padding: 3px;
+    border-radius: 6px;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    z-index: 300;
+}
+
+.profile-div.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.profile-div::before {
+    content: '';
+    position: absolute;
+    right: 17px;
+    top: -4px;
+    height: 12px;
+    width: 12px;
+    background-color: var(--nav-color);
+    transform: rotate(-45deg);
+    z-index: -1;
+}
+
+/* Fix link styling */
+.profile-link {
+    color: var(--text-color) !important;
+    text-decoration: none !important;
+}
+
+
+
+/* Toggle profile dropdown on active state */
+.searchToggle.active ~ .profile-div,
+.profileToggle.active ~ .profile-div {
+    opacity: 1;
+    pointer-events: auto;
+    bottom: -74px;
+}
+
+
+

@@ -1,7 +1,7 @@
 <link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet">
 <nav>
     <div class="nav-bar">
-        <i class='bx bx-menu sidebarOpen' ></i>
+        <i class='bx bx-menu sidebarOpen'></i>
         <span class="logo navLogo"><a href="{{ url('/') }}">Clothes</a></span>
 
         <div class="menu">
@@ -12,7 +12,7 @@
 
             <ul class="nav-links">
                 <li><a href="{{ url('/') }}">Home</a></li>
-                <li><a class="@if(Route::is('shops.index')) active @endif" href="{{ route('shops.index')}}">Shops</a></li>
+                <li><a class="@if(Route::is('shops.index')) active @endif" href="{{ route('shops.index') }}">Shops</a></li>
             </ul>
         </div>
 
@@ -34,56 +34,109 @@
                     <div id="searchResults" class="d-none position-absolute bg-white border rounded shadow-sm w-100" style="top: 100%; left: 0; z-index: 1000;"></div>
                 </div>
             </div>
-            <div class="dark-light">
-                <i class='bx bx-user user'></i>
+
+            <div class="searchBox">
+                <div class="profileToggle">
+                    @guest
+                        <a href="{{route('login')}}">
+                            @endguest
+                            <div class="dark-light">
+                                <i class='bx bx-user user' id="profileIcon"></i>
+                            </div>
+                            @guest
+                        </a>
+                    @endguest
+                </div>
+
+                @auth
+                    <div class="profile-menu d-none position-absolute bg-white border rounded shadow-sm p-2 profile-div text-center" style="top: 100%; right: 0; z-index: 1000;">
+
+                        <p>{{ Auth::user()->name }}</p>
+
+                        <hr>
+                        <a href="{{ route('shop.my-shops') }}" class="d-block py-2 profile-link">Favorites</a>
+                        <a href="{{ route('shop.my-shops') }}" class="d-block py-2 profile-link">My Shops</a>
+                        <a href="{{ route('logout') }}" class="d-block py-2 profile-link"
+                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            Logout
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+                    </div>
+                @endauth
             </div>
         </div>
     </div>
 </nav>
+
 <script>
     const body = document.querySelector("body"),
         nav = document.querySelector("nav"),
         modeToggle = document.querySelector(".dark-light"),
         searchToggle = document.querySelector(".searchToggle"),
+        profileToggle = document.querySelector(".profileToggle"),
+        profileMenu = document.querySelector(".profile-menu"),
         sidebarOpen = document.querySelector(".sidebarOpen"),
         siderbarClose = document.querySelector(".siderbarClose");
 
     let getMode = localStorage.getItem("mode");
     if(getMode && getMode === "dark-mode"){
         body.classList.add("dark");
+    } else if (getMode && getMode === "light-mode") {
+        body.classList.add("light");
     }
 
-    // js code to toggle dark and light mode
-    modeToggle.addEventListener("click" , () =>{
+    // Toggle dark and light mode
+    modeToggle.addEventListener("click", () => {
         modeToggle.classList.toggle("active");
-        body.classList.toggle("dark");
-
-        // js code to keep user selected mode even page refresh or file reopen
-        if(!body.classList.contains("dark")){
-            localStorage.setItem("mode" , "light-mode");
-        }else{
-            localStorage.setItem("mode" , "dark-mode");
+        if(body.classList.contains("dark")){
+            body.classList.remove("dark");
+            body.classList.add("light");
+            localStorage.setItem("mode", "light-mode");
+        } else if (body.classList.contains("light")){
+            body.classList.remove("light");
+            body.classList.add("dark");
+            localStorage.setItem("mode", "dark-mode");
+        } else {
+            body.classList.add("dark");
+            localStorage.setItem("mode", "dark-mode");
         }
     });
 
-    // js code to toggle search box
-    searchToggle.addEventListener("click" , () =>{
+    // Toggle profile menu
+    profileToggle.addEventListener("click", (e) => {
+        profileMenu.classList.toggle("d-none");
+        e.stopPropagation(); // Prevent closing when clicking inside the menu
+    });
+
+    // Close profile menu when clicking outside
+    body.addEventListener("click", () => {
+        if (!profileMenu.classList.contains("d-none")) {
+            profileMenu.classList.add("d-none");
+        }
+    });
+
+    // Prevent closing profile menu when clicking inside it
+    profileMenu.addEventListener("click", (e) => {
+        e.stopPropagation();
+    });
+
+    // Search Toggle
+    searchToggle.addEventListener("click", () => {
         searchToggle.classList.toggle("active");
     });
 
-
-    //   js code to toggle sidebar
-    sidebarOpen.addEventListener("click" , () =>{
+    // Sidebar Toggle
+    sidebarOpen.addEventListener("click", () => {
         nav.classList.add("active");
     });
 
-    body.addEventListener("click" , e =>{
+    body.addEventListener("click", (e) => {
         let clickedElm = e.target;
-
-        if(!clickedElm.classList.contains("sidebarOpen") && !clickedElm.classList.contains("menu")){
+        if (!clickedElm.classList.contains("sidebarOpen") && !clickedElm.classList.contains("menu")) {
             nav.classList.remove("active");
         }
     });
-
-
 </script>
+

@@ -75,8 +75,8 @@
                                 </div>
 
                                 <div class="col-md-4 mt-4">
-                                    <button type="submit" class="btn btn-primary">Apply</button>
-                                    <button type="button" id="reset-filters" class="btn btn-secondary ms-2">Reset</button>
+                                    <button type="submit" class="btn btn-primary apply-button">Apply</button>
+                                    <button type="button" id="reset-filters" class="btn btn-secondary ms-2 reset-button">Reset</button>
                                 </div>
                             </div>
                         </form>
@@ -84,15 +84,8 @@
                 </div>
             </div>
         </div>
-
-
-
         <div class="row mt-4" id="product-list">
             @forelse ($products as $product)
-
-
-
-
                 <div class="col-lg-3 col-md-4 col-sm-6 product-item">
                     <div class="card mb-4 product-card">
                         <!-- If the product has images -->
@@ -113,15 +106,15 @@
                             </div>
                         @else
                             <div class="image-container">
-                                <img src="https://via.placeholder.com/150" class="card-img" alt="No image available">
+                                <img src="{{ asset('assets/images/150.png') }}" class="card-img" alt="No image available">
                             </div>
                         @endif
                         <div class="product-card-body">
                             <h4 class="product-card-title">{{$product->name}}</h4>
-                            <p class="product-card-custom">{{$product->productCategory['name']}}</p>
+                            <p class="product-card-custom">
+                                <a href="?category={{$product->productCategory['id']}}"> {{$product->productCategory['name']}}</a>
+                                - {{$product->productSize->size_name}}</p>
                             <p class="product-card-custom"><span class="product-card-price">{{$product->price}} MDL</span>
-
-
                             <div class="row">
                                 <div class="col-md-6 card-button"><a href=""><div class="card-button-inner bag-button">Add to Bag</div></a></div>
                                 <div class="col-md-6 card-button"><a href="{{ route('products.show', $product->id) }}"><div class="card-button-inner wish-button">DETAILS</div></a></div>
