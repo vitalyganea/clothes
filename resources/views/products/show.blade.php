@@ -51,7 +51,7 @@
                 </div>
                 <div class="mb-4">
                     <p class="text-lg"><b>Category:</b>
-                        <a href="{{ route('category.index', $product->productCategory->id)}}">
+                        <a href="/?category={{$product->productCategory->id}}">
                             {{$product->productCategory->name }}
                         </a>
                     </p>
