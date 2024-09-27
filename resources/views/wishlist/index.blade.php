@@ -19,7 +19,7 @@
                 </thead>
                 <tbody id="wishlist-table-body">
                 @forelse ($products as $product)
-                    <tr id="wishlist-item-{{ $product->id }}">
+                    <tr class="wishlist-item-{{ $product->id }}">
                         <td>
                             @if ($product->images->count() > 0)
                                 <img src="{{ asset($product->images->first()->path) }}" alt="{{ $product->name }}" class="wishlist-product-image">
@@ -33,8 +33,8 @@
                         <td>{{ $product->price }} MDL</td>
                         <td>
                             <div class="d-flex justify-content-between">
-                                <a href="{{ route('products.show', $product->id) }}" class="btn btn-info btn-sm card-button-inner wish-button">Details</a>
-                                <button class="btn btn-danger btn-sm card-button-inner bag-button" onclick="confirmRemoveWishlistItem({{ $product->id }})">Remove</button>
+                                <a href="{{ route('products.show', $product->id) }}" class="btn btn-outline-dark btn-sm">Details</a>
+                                <button class="btn btn-outline-dark btn-sm" onclick="removeWishlistItem({{ $product->id }})">Remove</button>
                             </div>
                         </td>
                     </tr>
@@ -50,16 +50,16 @@
         <!-- Card layout for mobile devices -->
         <div class="d-md-none">
             @forelse ($products as $product)
-                <div class="card mb-3" id="wishlist-item-{{ $product->id }}">
+                <div class="card mb-3 wishlist-item-{{ $product->id }}">
                     <div class="row no-gutters">
-                        <div class="col-4">
+                        <div class="col-6">
                             @if ($product->images->count() > 0)
                                 <img src="{{ asset($product->images->first()->path) }}" alt="{{ $product->name }}" class="wishlist-product-image">
                             @else
                                 <img src="{{ asset('assets/images/150.png') }}" alt="No image available" class="wishlist-product-image">
                             @endif
                         </div>
-                        <div class="col-8">
+                        <div class="col-6">
                             <div class="card-body">
                                 <h5 class="card-title">{{ $product->name }}</h5>
                                 <p class="card-text">
@@ -69,7 +69,7 @@
                                 </p>
                                 <div class="d-flex justify-content-between">
                                     <a href="{{ route('products.show', $product->id) }}" class="btn btn-outline-dark btn-sm">Details</a>
-                                    <button class="btn btn-outline-dark btn-sm" onclick="confirmRemoveWishlistItem({{ $product->id }})">Remove</button>
+                                    <button class="btn btn-outline-dark btn-sm" onclick="removeWishlistItem({{ $product->id }})">Remove</button>
                                 </div>
                             </div>
                         </div>
@@ -86,8 +86,9 @@
 
 
 <script>
-    // Confirm removal of wishlist item using SweetAlert2
-    function confirmRemoveWishlistItem(productId) {
+    // Remove wishlist item via AJAX
+    function removeWishlistItem(productId) {
+        // Show confirmation dialog
         Swal.fire({
             title: 'Are you sure?',
             text: 'Do you want to remove this product from your wishlist?',
@@ -97,48 +98,49 @@
             cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
-                removeWishlistItem(productId); // Call the function to remove the item
+                // Proceed with the removal if confirmed
+                fetch(`/wishlist/remove/${productId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('Failed to remove product from wishlist.');
+                        }
+                    })
+                    .then(data => {
+                        // If successful, remove the item(s) from the DOM by class name
+                        const itemsToRemove = document.getElementsByClassName(`wishlist-item-${productId}`);
+
+                        // Convert HTMLCollection to an array and loop through it to remove each element
+                        Array.from(itemsToRemove).forEach(item => {
+                            item.remove();
+                        });
+
+                        // Show success message
+                        Swal.fire({
+                            title: 'Product removed!',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            toast: true,
+                            position: 'top-end'
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Error!', 'Failed to remove product from wishlist.', 'error');
+                    });
             }
         });
     }
 
-    // Remove wishlist item via AJAX
-    function removeWishlistItem(productId) {
-        fetch(`/wishlist/remove/${productId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Failed to remove product from wishlist.');
-                }
-            })
-            .then(data => {
-                // If successful, remove the item from the DOM
-                document.getElementById(`wishlist-item-${productId}`).remove();
-
-                // Show success message
-                Swal.fire({
-                    title: 'Product removed!',
-                    icon: 'success',
-                    showConfirmButton: false,
-                    timer: 1500,
-                    toast: true,
-                    position: 'top-end'
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire('Error!', 'Failed to remove product from wishlist.', 'error');
-            });
-    }
 </script>
-
 <style>
     .card-button-inner {
         display: inline-block;
@@ -160,7 +162,7 @@
     }
 
     .wishlist-product-image {
-        width: 180px;
+        width: 100%;
         height: 180px;
         object-fit: cover;
         object-position: center;
