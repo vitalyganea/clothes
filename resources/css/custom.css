@@ -732,6 +732,7 @@ body.dark .search-field i{
 
 /* Initial styles for wish-button */
 .wish-button {
+    cursor: pointer !important;
     border: 1px solid black;
     color: black;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Add smooth transition */

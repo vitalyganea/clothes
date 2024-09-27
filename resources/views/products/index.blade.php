@@ -116,8 +116,26 @@
                                 - {{$product->productSize->size_name}}</p>
                             <p class="product-card-custom"><span class="product-card-price">{{$product->price}} MDL</span>
                             <div class="row">
-                                <div class="col-md-6 card-button cursor-pointer"><a onclick="addToWishlist({{ $product->id }})"><div class="card-button-inner bag-button">FAVORITE</div></a></div>
-                                <div class="col-md-6 card-button"><a href="{{ route('products.show', $product->id) }}"><div class="card-button-inner wish-button">DETAILS</div></a></div>
+                                <div class="col-md-6 card-button">
+                                    @if (Auth::check())
+                                        <a id="wishlist-button-{{ $product->id }}" onclick="toggleWishlist({{ $product->id }}, {{ $product->isWishlist ? 'true' : 'false' }})">
+                                            <div id="wishlist-button-inner-{{ $product->id }}" class="card-button-inner cursor-pointer {{ $product->isWishlist ? 'bag-button' : 'wish-button' }}">
+                                                {{ $product->isWishlist ? 'IN WISHLIST' : 'ADD WISHLIST' }}
+                                            </div>
+                                        </a>
+                                    @else
+                                        <a href="{{ route('login') }}">
+                                            <div class="card-button-inner cursor-pointer wish-button">
+                                                ADD WISHLIST
+                                            </div>
+                                        </a>
+                                    @endif
+                                </div>
+                                <div class="col-md-6 card-button">
+                                    <a href="{{ route('products.show', $product->id) }}">
+                                        <div class="card-button-inner wish-button">DETAILS</div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -146,16 +164,19 @@
     <script src="{{ asset('js/product/index.js') }}"></script>
 @endpush
 
-    <script>
-        function addToWishlist(productId) {
-        // Send AJAX request to add the product to the wishlist
-        fetch(`/wishlist/add/${productId}`, {
-            method: 'POST',
+<script>
+    function toggleWishlist(productId, isInWishlist) {
+        // Determine the action based on the current wishlist state
+        const actionUrl = isInWishlist ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
+        const method = isInWishlist ? 'DELETE' : 'POST';
+
+        fetch(actionUrl, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token for security
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
-            body: JSON.stringify({ product_id: productId }) // Send the product ID
+            body: JSON.stringify({ product_id: productId })
         })
             .then(response => {
                 if (response.ok) {
@@ -164,18 +185,27 @@
                 throw new Error('Network response was not ok');
             })
             .then(data => {
-                // Handle success response
+                // Update the button's text and classes dynamically
+                const buttonText = isInWishlist ? 'ADD WISHLIST' : 'IN WISHLIST';
+                const buttonClass = isInWishlist ? 'wish-button' : 'bag-button';
+
+                document.getElementById(`wishlist-button-inner-${productId}`).textContent = buttonText;
+                document.getElementById(`wishlist-button-inner-${productId}`).className = `card-button-inner ${buttonClass}`;
+
+                // Toggle the wishlist state for the next click
+                document.getElementById(`wishlist-button-${productId}`).setAttribute('onclick', `toggleWishlist(${productId}, ${!isInWishlist})`);
+
+                // Show success message
                 Swal.fire({
-                    title: 'Product added to wishlist!',
+                    title: isInWishlist ? 'Product removed from wishlist!' : 'Product added to wishlist!',
                     icon: 'success',
                     showConfirmButton: false,
-                    timer: 1500, // Auto-close after 1.5 seconds
-                    toast: true, // Display as a toast
-                    position: 'top-end' // Positioning of the toast
+                    timer: 1500,
+                    toast: true,
+                    position: 'top-end'
                 });
             })
             .catch(error => {
-                // Handle error response
                 console.error('There was a problem with the fetch operation:', error);
             });
     }

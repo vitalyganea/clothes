@@ -17,17 +17,6 @@ class WishlistController extends Controller
 
     }
 
-    public function remove($id)
-    {
-        $wishlistItem = Wishlist::where('product_id', $id)->where('user_id', auth()->id())->first();
-        if ($wishlistItem) {
-            $wishlistItem->delete();
-            return redirect()->route('wishlist.index')->with('success', 'Product removed from wishlist.');
-        }
-
-        return redirect()->route('wishlist.index')->with('error', 'Product not found.');
-    }
-
     public function add(Request $request, $id)
     {
         // Validate the request
@@ -49,6 +38,18 @@ class WishlistController extends Controller
 
             return response()->json(['message' => 'Product added to wishlist successfully.']);
         }
+
+        return response()->json(['message' => 'Product already in wishlist.'], 400);
     }
 
+    public function remove($id)
+    {
+        $wishlistItem = Wishlist::where('product_id', $id)->where('user_id', auth()->id())->first();
+        if ($wishlistItem) {
+            $wishlistItem->delete();
+            return response()->json(['message' => 'Product removed from wishlist successfully.']);
+        }
+
+        return response()->json(['message' => 'Product not found in wishlist.'], 404);
+    }
 }

@@ -16,7 +16,7 @@ class ProductController extends Controller
 {
 
     public function index(Request $request) {
-        $products = Product::query();
+        $products = Product::with('isWishlist');  // Load wishlist relationship
 
         // Apply filters if they exist
         if ($request->has('category') && $request->get('category') != null) {

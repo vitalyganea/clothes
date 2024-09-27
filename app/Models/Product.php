@@ -41,4 +41,9 @@ class Product extends Model
     {
         return $this->hasMany(Wishlist::class);
     }
+
+    public function isWishlist() {
+        return $this->hasOne(Wishlist::class, 'product_id')
+            ->where('user_id', auth()->id());
+    }
 }

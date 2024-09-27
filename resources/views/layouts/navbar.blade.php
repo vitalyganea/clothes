@@ -54,7 +54,7 @@
                         <p>{{ Auth::user()->name }}</p>
 
                         <hr>
-                        <a href="{{ route('wishlist.index') }}" class="d-block py-2 profile-link">Favorites</a>
+                        <a href="{{ route('wishlist.index') }}" class="d-block py-2 profile-link">Your wishlist</a>
                         <a href="{{ route('shop.my-shops') }}" class="d-block py-2 profile-link">My Shops</a>
                         <a href="{{ route('logout') }}" class="d-block py-2 profile-link"
                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
