@@ -8,17 +8,12 @@ const resetButton = document.getElementById('reset-filters');
 const minPriceInput = document.getElementById('min-price');
 const maxPriceInput = document.getElementById('max-price');
 const sortSelect = document.getElementById('sort-select');
-const scrollToTopBtn = document.getElementById("scrollToTopBtn");
 let loadingMore = false;
 
 // Extract URL parameters
 const urlParams = new URLSearchParams(window.location.search);
 const previouslySelectedSize = urlParams.get('size') || '';
 const previouslySelectedCategory = urlParams.get('category') || '';
-
-scrollToTopBtn.onclick = function () {
-    window.scrollTo({top: 0, behavior: 'smooth'});
-};
 
 // Initialize image navigation for image carousels
 const initializeImageNavigation = () => {
@@ -270,14 +265,6 @@ window.addEventListener('scroll', function () {
             formData.set('page', nextPage.getAttribute('href').split('page=')[1]);
             fetchProducts(formData, true); // Append new products
         }
-    }
-
-    if (document.body.scrollTop > 600 || document.documentElement.scrollTop > 600) {
-        scrollToTopBtn.style.opacity = 1; // Fade in
-        scrollToTopBtn.style.visibility = "visible"; // Make it visible
-    } else {
-        scrollToTopBtn.style.opacity = 0; // Fade out
-        scrollToTopBtn.style.visibility = "hidden"; // Hide it
     }
 });
 

@@ -3,9 +3,6 @@
 @section('content')
     <div class="container">
         <h1 class="title">All Products</h1>
-        <button id="scrollToTopBtn" class="btn" style="font-size:25px; display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background-color: black; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
-            <i class="fa fa-arrow-up" aria-hidden="true"></i>
-        </button>
         <div class="accordion sticky-filter custom-filter" id="filterAccordion">
             <div class="accordion-item custom-accordion-item">
                 <h2 class="accordion-header" id="headingOne">
