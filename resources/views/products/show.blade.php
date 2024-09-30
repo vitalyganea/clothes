@@ -32,16 +32,11 @@
                     <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning">
                         <i class="fa fa-pencil" style="font-size:24px"></i>
                     </a>
-
-
                 @endif
             </h1>
-
                 <div class="mb-4">
                     <p class="text-lg"><b>Description:</b> {!! $product->description !!}</p>
                 </div>
-
-
                 <div class="mb-4">
                     <p class="text-lg"><b>Size:</b> {{$product->productSize->size_name }}</p>
                 </div>
@@ -72,7 +67,9 @@
                         {{$product->created_at->diffForHumans()}}
                     </p>
                 </div>
-
+                <div class="mb-4">
+                    <p class="text-lg"><b>City:</b> {{$product->city->name }}</p>
+                </div>
             </div>
             @if($remainingImages)
                 @foreach ($remainingImages as $image)

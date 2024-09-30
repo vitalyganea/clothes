@@ -1,7 +1,7 @@
 #searchResults {
     max-height: 300px; /* Limit height */
     overflow-y: auto; /* Scroll if needed */
-    background-color: #fff;
+    background-color: var(--nav-color) !important;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     border-radius: 0 0 10px 10px; /* Slightly rounded bottom corners */
     position: absolute;
@@ -11,6 +11,20 @@
     border: 1px solid #ddd;
     z-index: 1001 !important;
 }
+
+.custom-list-group{
+    background-color: var(--nav-color) !important;
+}
+
+.search-link{
+    background-color: var(--nav-color) !important;
+}
+
+.custom-list-group-item{
+    background-color: var(--nav-color) !important;
+    color: var(--text-color) !important;
+}
+
 
 .language-switcher {
     display: flex; /* Flexbox for inline alignment */
@@ -198,7 +212,7 @@
 }
 
 .sticky-filter {
-    position: sticky;
+    /*position: sticky;*/
     top: 0;
     z-index: 100; /* Ensure it stays above other content */
 }

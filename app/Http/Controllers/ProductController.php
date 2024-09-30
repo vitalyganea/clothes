@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductImage;
@@ -35,6 +36,10 @@ class ProductController extends Controller
             $products->where('price', '<=', (int)$request->max_price);
         }
 
+        if ($request->has('city') && $request->get('city') != null) {
+            $products->where('city_id', $request->city);
+        }
+
         switch ($request->sort) {
             case 'price_asc':
                 $products->orderBy('price', 'asc');
@@ -65,7 +70,8 @@ class ProductController extends Controller
 
         return view('products.index', [
             'products' => $products,
-            'productCategories' => ProductCategory::all(),
+            'productCategories' => ProductCategory::orderBy('name')->get(),
+            'cities' => City::orderBy('name')->get(),
             'selectedCategory' => $request->category,
             'selectedSize' => $request->size,
             'minPrice' => $request->min_price ?? $minPrice,

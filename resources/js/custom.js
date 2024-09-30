@@ -9,9 +9,9 @@ document.getElementById('searchQuery').addEventListener('input', function() {
                 document.getElementById('searchQuery').classList.remove('border-radius-bottom');
 
                 if (data.html.length > 0) {
-                    resultList += '<ul class="list-group">' + data.html + '</ul>';
+                    resultList += '<ul class="list-group custom-list-group">' + data.html + '</ul>';
                 } else {
-                    resultList = '<p style="height:40px; margin: auto; width: 50%; text-align: center;">No results found</p>';
+                    resultList = '<ul class="list-group custom-list-group"><li class="list-group-item custom-list-group-item">Nothing found</li></ul>';
                 }
 
                 document.getElementById('searchResults').classList.remove('d-none');

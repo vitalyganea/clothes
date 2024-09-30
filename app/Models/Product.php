@@ -9,7 +9,16 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'shop_id', 'user_id', 'price', 'category_id', 'size_id'];
+    protected $fillable = [
+        'name',
+        'description',
+        'shop_id',
+        'user_id',
+        'price',
+        'category_id',
+        'size_id',
+        'city_id',
+    ];
 
 
     public function shop()
@@ -45,5 +54,10 @@ class Product extends Model
     public function isWishlist() {
         return $this->hasOne(Wishlist::class, 'product_id')
             ->where('user_id', auth()->id());
+    }
+
+    public function city(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(City::class, 'city_id');
     }
 }

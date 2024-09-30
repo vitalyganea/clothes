@@ -8,6 +8,7 @@ const resetButton = document.getElementById('reset-filters');
 const minPriceInput = document.getElementById('min-price');
 const maxPriceInput = document.getElementById('max-price');
 const sortSelect = document.getElementById('sort-select');
+const citySelect = document.getElementById('city-select');
 let loadingMore = false;
 
 // Extract URL parameters
@@ -125,7 +126,7 @@ const updateSizes = (categoryId) => {
 };
 
 // Function to update URL parameters without reloading the page
-const updateURL = (categoryId, sizeId, minPrice, maxPrice, sortBy) => {
+const updateURL = (categoryId, sizeId, minPrice, maxPrice, sortBy, city) => {
     let url = new URL(window.location.href);
     const params = new URLSearchParams(url.search);
 
@@ -153,6 +154,12 @@ const updateURL = (categoryId, sizeId, minPrice, maxPrice, sortBy) => {
         params.delete('sort');
     } else {
         params.set('sort', sortBy);
+    }
+
+    if (city === "" || city === undefined) {
+        params.delete('city');
+    } else {
+        params.set('city', city);
     }
 
     // Remove URL parameters if no filters are applied
@@ -216,32 +223,35 @@ filterForm.addEventListener('submit', function (e) {
     const minPrice = minPriceInput.value;
     const maxPrice = maxPriceInput.value;
     const sortBy = sortSelect.value;
-    updateURL(categoryId, sizeId, minPrice, maxPrice, sortBy);
-
+    const city = citySelect.value;
+    updateURL(categoryId, sizeId, minPrice, maxPrice, sortBy, city);
 });
 
 // Event listener for filter changes
+function handleFilterChange() {
+    updateURL(
+        categorySelect.value,
+        sizesSelect.value,
+        minPriceInput.value,
+        maxPriceInput.value,
+        sortSelect.value,
+        citySelect.value
+    );
+}
+
+// Event listener for category change to also update sizes
 categorySelect.addEventListener('change', function () {
-    const categoryId = this.value;
-    updateSizes(categoryId); // Update sizes for the selected category
-    updateURL(categoryId, sizesSelect.value, minPriceInput.value, maxPriceInput.value, sortSelect.value); // Update the URL
+    updateSizes(this.value); // Update sizes for the selected category
+    handleFilterChange(); // Update the URL with the new category
 });
 
-sizesSelect.addEventListener('change', function () {
-    updateURL(categorySelect.value, this.value, minPriceInput.value, maxPriceInput.value, sortSelect.value);
-});
+// Use the same handler for the other filter inputs
+sizesSelect.addEventListener('change', handleFilterChange);
+minPriceInput.addEventListener('input', handleFilterChange);
+maxPriceInput.addEventListener('input', handleFilterChange);
+sortSelect.addEventListener('change', handleFilterChange);
+citySelect.addEventListener('change', handleFilterChange);
 
-minPriceInput.addEventListener('input', function () {
-    updateURL(categorySelect.value, sizesSelect.value, this.value, maxPriceInput.value, sortSelect.value);
-});
-
-maxPriceInput.addEventListener('input', function () {
-    updateURL(categorySelect.value, sizesSelect.value, minPriceInput.value, this.value, sortSelect.value);
-});
-
-sortSelect.addEventListener('change', function () {
-    updateURL(categorySelect.value, sizesSelect.value, minPriceInput.value, maxPriceInput.value, this.value);
-});
 
 // Reset filters functionality
 if (resetButton !== null) {
@@ -268,8 +278,4 @@ window.addEventListener('scroll', function () {
     }
 });
 
-// Initial load
-// fetchProducts(new FormData(filterForm));
-
-// Initialize image navigation for initially loaded products
 initializeImageNavigation();

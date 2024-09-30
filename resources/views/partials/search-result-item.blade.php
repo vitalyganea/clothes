@@ -1,12 +1,12 @@
 @if(isset($product))
-    <a style="text-decoration: none" href="{{ url('/products/' . $product->id) }}">
-        <li class="list-group-item">
+    <a class="search-link" style="text-decoration: none" href="{{ url('/products/' . $product->id) }}">
+        <li class="list-group-item custom-list-group-item">
             {{ $product->name }} - {{ $product->price }}MDL
         </li>
     </a>
 @elseif(isset($shop))
     <a style="text-decoration: none" href="{{ url('/shops/' . $shop->id) }}">
-        <li class="list-group-item">
+        <li class="list-group-item custom-list-group-item">
             {{ $shop->name }}
         </li>
     </a>

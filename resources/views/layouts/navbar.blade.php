@@ -31,7 +31,7 @@
                 <div class="search-field">
                     <input type="text" id="searchQuery" placeholder="Search...">
                     <i class='bx bx-search'></i>
-                    <div id="searchResults" class="d-none position-absolute bg-white border rounded shadow-sm w-100" style="top: 100%; left: 0; z-index: 1000;"></div>
+                    <div id="searchResults" class="d-none position-absolute bg-white w-100" style="top: 100%; left: 0; z-index: 1000;"></div>
                 </div>
             </div>
 
@@ -124,6 +124,7 @@
     // Search Toggle
     searchToggle.addEventListener("click", () => {
         searchToggle.classList.toggle("active");
+        document.querySelector('#searchQuery').focus();
     });
 
     // Sidebar Toggle

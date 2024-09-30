@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         $seederArray = [
             CategoriesAndSizesSeeder::class,
+            CitiesSeeder::class,
         ];
 
          User::firstOrCreate(['email' => 'zzzvitalii@gmail.com'], [
