@@ -1,7 +1,12 @@
 {
     "/js/app.js": "/js/app.js",
     "/js/custom.js": "/js/custom.js",
-    "/js/product/index.js": "/js/product/index.js",
+    "/js/product/image-navigation.js": "/js/product/image-navigation.js",
+    "/js/product/filter-update.js": "/js/product/filter-update.js",
+    "/js/product/reset-filter.js": "/js/product/reset-filter.js",
+    "/js/product/infinite-scroll.js": "/js/product/infinite-scroll.js",
+    "/js/product/size-update.js": "/js/product/size-update.js",
+    "/js/product/add-to-wishlist.js": "/js/product/add-to-wishlist.js",
     "/css/custom.css": "/css/custom.css",
     "/css/app.css": "/css/app.css"
 }

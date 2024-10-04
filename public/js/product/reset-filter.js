@@ -1,0 +1,1 @@
+(()=>{var e=document.getElementById("filter-form"),t=document.getElementById("reset-filters");null!==t&&t.addEventListener("click",(function(){e.reset(),updateURL("","","","",""),fetchProducts(new FormData(e))}))})();
